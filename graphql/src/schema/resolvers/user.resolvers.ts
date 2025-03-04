@@ -1,11 +1,13 @@
 import logger from "../../config/logger";
+import { UserService } from "../../services/user.service";
+
+const userService = new UserService();
 
 export const userResolvers = {
   Query: {
     // Get current authenticated user
     me: async (_: any, __: any, context: any) => {
       try {
-        // For now, just return the user from the context
         logger.info("Me resolver context:", context);
 
         return context.user;
@@ -17,19 +19,10 @@ export const userResolvers = {
       }
     },
 
-    // Get user by ID (requires authentication)
     getUser: async (_: any, { id }: { id: string }, context: any) => {
       try {
         // isAuthenticated(context);
-        // return await UserService.getUserById(id);
-
-        logger.info("Get user by ID:", id);
-
-        return {
-          id,
-          name: "Test User",
-          email: "test@gmail.com",
-        };
+        return await userService.getUserById(id);
       } catch (error) {
         logger.error(`Error in getUser resolver for ID ${id}:`, error);
         throw error;
@@ -39,17 +32,7 @@ export const userResolvers = {
     // Get all users (admin only)
     getAllUsers: async (_: any, __: any, context: any) => {
       try {
-        // hasRole(context, "admin");
-        // return await UserService.getAllUsers();
-
-        logger.info("Get all users");
-        return [
-          {
-            id: "1",
-            name: "Test User",
-            email: "test@gmail.com",
-          },
-        ];
+        return await userService.getAllUsers();
       } catch (error) {
         logger.error("Error in getAllUsers resolver:", error);
         throw error;
@@ -131,26 +114,6 @@ export const userResolvers = {
         logger.error(`Error in deleteUser resolver for ID ${id}:`, error);
         throw error;
       }
-    },
-  },
-
-  // Resolvers for User type fields if needed
-  Types: {
-    // Example: If we need to fetch additional data for User type
-    User: {
-      // This is just an example of how to add field resolvers if needed
-      // e.g., if we wanted to fetch notifications count for a user
-      /*
-      notificationsCount: async (parent: any) => {
-        try {
-          const stats = await NotificationService.getNotificationStats(parent.id);
-          return stats.totalCount;
-        } catch (error) {
-          logger.error(`Error resolving notificationsCount for user ${parent.id}:`, error);
-          return 0;
-        }
-      },
-      */
     },
   },
 };

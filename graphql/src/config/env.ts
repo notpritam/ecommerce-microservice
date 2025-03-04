@@ -7,6 +7,7 @@ interface IEnv {
     orderServiceURL: string;
     productServiceURL: string;
     notificationServiceURL: string;
+    userServiceURL: string;
   };
   mongodb: string;
   port?: number;
@@ -22,6 +23,7 @@ const ENV: IEnv = {
     notificationServiceURL:
       process.env.NOTIFICATION_SERVICE_URL ||
       "http://notification-service:3002",
+    userServiceURL: process.env.USER_SERVICE_URL || "http://user-service:3001",
   },
   mongodb:
     process.env.MONGO_URI ||
