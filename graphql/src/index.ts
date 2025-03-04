@@ -3,30 +3,12 @@ import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import ENV from "./config/env";
 import logger from "./config/logger";
-
-const typeDefs = `
-  type Book {
-    title: String
-    author: String
-  }
-
-  type Query {
-    books: [Book]
-  }
-`;
+import { typeDefs } from "./schema/typeDefs";
+import { resolvers } from "./schema/resolvers";
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers: {
-    Query: {
-      books: () => [
-        {
-          title: "Harry Potter and the Chamber of Secrets",
-          author: "J.K. Rowling",
-        },
-      ],
-    },
-  },
+  typeDefs: typeDefs,
+  resolvers: resolvers,
 });
 
 const startServer = async () => {
@@ -35,7 +17,7 @@ const startServer = async () => {
       listen: { port: ENV.port },
     });
 
-    logger.info(`Server ready at ${url}`);
+    logger.info(`🚀 GraphQL Gateway ready at: ${url}`);
   } catch (error) {
     logger.error(`Error starting server: ${error}`);
   }
@@ -44,3 +26,5 @@ const startServer = async () => {
 startServer();
 
 logger.info(`Server ready at http://localhost:${ENV.port}/graphql`);
+
+console.log("Hello, world from GraphQL!");
