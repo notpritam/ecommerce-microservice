@@ -24,8 +24,9 @@ const ENV: IEnv = {
       "http://notification-service:3002",
   },
   mongodb:
-    process.env.MONGO_URI || "mongodb://mongo-scheduler:27017/notification-db",
-  port: parseInt(process.env.PORT || "3001"),
+    process.env.MONGO_URI ||
+    "mongodb://mongo-notification:27017/notification-db",
+  port: parseInt(process.env.PORT || "3002"),
   kafka_brokers: process.env.KAFKA_BROKERS || "localhost:9092",
   kafka_client_id: process.env.KAFKA_CLIENT_ID || "notification-service",
   kafka_group_id:
