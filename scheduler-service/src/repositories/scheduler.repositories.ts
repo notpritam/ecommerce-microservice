@@ -1,4 +1,4 @@
-import SchedulerModel, { IScheduler } from "./models/scheduler.model";
+import SchedulerModel, { IScheduler } from "../models/scheduler.model";
 
 export const findAllSchedulers = async (): Promise<IScheduler[]> => {
   return SchedulerModel.find({ enabled: true });

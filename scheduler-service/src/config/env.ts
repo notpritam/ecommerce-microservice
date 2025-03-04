@@ -10,6 +10,8 @@ interface IEnv {
   };
   mongodb: string;
   port?: number;
+  kafka_brokers: string;
+  kafka_client_id: string;
 }
 
 const ENV: IEnv = {
@@ -22,6 +24,8 @@ const ENV: IEnv = {
   },
   mongodb: process.env.MONGO_URI || "mongodb://mongo-scheduler:27017/user-db",
   port: parseInt(process.env.PORT || "3001"),
+  kafka_brokers: process.env.KAFKA_BROKERS || "localhost:9092",
+  kafka_client_id: process.env.KAFKA_CLIENT_ID || "scheduler-service",
 };
 
 export default ENV;
