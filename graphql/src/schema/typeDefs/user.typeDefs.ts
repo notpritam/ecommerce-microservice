@@ -1,71 +1,61 @@
-import gql from "graphql-tag";
+import { gql } from "graphql-tag";
 
-export const userTypeDefs = gql`
-    # User Preferences Enum
+export const userTypes = gql`
+  type UserPreferences {
+    promotions: Boolean!
+    order_updates: Boolean!
+    recommendations: Boolean!
+  }
 
-    enum NotificationType {
-        PROMOTIONS
-        ORDER_UPDATE
-        RECOMMENDATION
-        ALL
-    }
+  type User {
+    id: ID!
+    name: String!
+    email: String!
+    preferences: UserPreferences!
+    role: String
+    createdAt: String
+    updatedAt: String
+  }
 
-    type User {
-        id: ID!
-        name: String!
-        email: String!
-        preferences: [NotificationType!] = [ALL]
-    }
+  input UserPreferencesInput {
+    promotions: Boolean
+    order_updates: Boolean
+    recommendations: Boolean
+  }
 
-    # User Input Types
+  input RegisterUserInput {
+    name: String!
+    email: String!
+    password: String!
+    preferences: UserPreferencesInput
+  }
 
-    input RegisterUserInput {
-        name: String!
-        email: String!
-        preferences: [NotificationType!] = [ALL]
-        password: String!
-    }
+  input LoginInput {
+    email: String!
+    password: String!
+  }
 
-    input LoginUserInput {
-        email: String!
-        password: String!
-    }
+  input UpdateUserInput {
+    name: String
+    email: String
+    preferences: UserPreferencesInput
+  }
 
-    input UpdateUserPreferencesInput {
-        preferences: [NotificationType!]!
-    }
+  type AuthResponse {
+    token: String!
+    user: User!
+  }
 
-    # User Response Types
+  extend type Query {
+    me: User
+    getUser(id: ID!): User
+    getAllUsers: [User!]!
+  }
 
-    type UserResponse implements Response {
-        success: Boolean!
-        message: String!
-        user: User
-    }
-
-    type AuthResponse implements Response {
-        success: Boolean!
-        message: String!
-        token: String
-        user: User
-    }
-
-    # User Query Types
-
-    extend type Query {
-        me: UserResponse! @auth
-        user(id: ID!): UserResponse! @auth
-        users(pagination: PaginationInput): [User!]! @auth
-    }
-
-    # User Mutation Types
-
-    extend type Mutation {
-        register(input: RegisterUserInput!): AuthResponse!
-        login(input: LoginUserInput!): AuthResponse!
-        updateUserPreferences(input: UpdateUserPreferencesInput!): UserResponse! @auth
-    }
-
-
-
+  extend type Mutation {
+    register(input: RegisterUserInput!): AuthResponse!
+    login(input: LoginInput!): AuthResponse!
+    updateUser(id: ID!, input: UpdateUserInput!): User!
+    deleteUser(id: ID!): Boolean!
+  }
 `;

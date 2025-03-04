@@ -1,5 +1,5 @@
 import { gql } from "graphql-tag";
-import { userTypeDefs } from "./user.typeDefs";
+import { userTypes } from "./user.typeDefs";
 
 const baseSchema = gql`
   type Query {
@@ -13,4 +13,4 @@ const baseSchema = gql`
   scalar JSON
 `;
 
-export const typeDefs = [baseSchema, userTypeDefs];
+export const typeDefs = [baseSchema, userTypes];
