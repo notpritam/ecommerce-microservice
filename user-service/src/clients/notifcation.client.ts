@@ -1,11 +1,10 @@
 import { BaseServiceClient } from "./base.client";
 import { INotification } from "../types/notification.types";
+import ENV from "../config/env";
 
 export class NotificationServiceClient extends BaseServiceClient {
   constructor() {
-    const notificationServiceUrl =
-      process.env.NOTIFICATION_SERVICE_URL ||
-      "http://notification-service:3002";
+    const notificationServiceUrl = ENV.services.notificationServiceURL;
     super(notificationServiceUrl, "Notification");
   }
 
