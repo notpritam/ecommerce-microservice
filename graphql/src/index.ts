@@ -1,16 +1,46 @@
-import express from "express";
-import { createServer } from "http";
+import { ApolloServer } from "@apollo/server";
 
-const app = express();
+import { startStandaloneServer } from "@apollo/server/standalone";
+import ENV from "./config/env";
+import logger from "./config/logger";
 
-const httpServer = createServer(app);
+const typeDefs = `
+  type Book {
+    title: String
+    author: String
+  }
 
-httpServer.listen(4000, () => {
-  console.log("Server is running on port 4000");
+  type Query {
+    books: [Book]
+  }
+`;
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers: {
+    Query: {
+      books: () => [
+        {
+          title: "Harry Potter and the Chamber of Secrets",
+          author: "J.K. Rowling",
+        },
+      ],
+    },
+  },
 });
 
-app.get("/", (req, res) => {
-  res.send("GraphQL Gateway2");
-});
+const startServer = async () => {
+  try {
+    const { url } = await startStandaloneServer(server, {
+      listen: { port: ENV.port },
+    });
 
-console.log("GraphQL Gateway2");
+    logger.info(`Server ready at ${url}`);
+  } catch (error) {
+    logger.error(`Error starting server: ${error}`);
+  }
+};
+
+startServer();
+
+logger.info(`Server ready at http://localhost:${ENV.port}/graphql`);
