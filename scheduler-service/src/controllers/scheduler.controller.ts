@@ -1,5 +1,3 @@
-// scheduler-service/src/controllers/scheduler.controller.ts
-
 import { Request, Response } from "express";
 import {
   createScheduler,
