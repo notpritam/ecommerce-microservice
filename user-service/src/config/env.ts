@@ -8,6 +8,8 @@ interface IEnv {
     productServiceURL: string;
     notificationServiceURL: string;
   };
+  mongodb: string;
+  port?: number;
 }
 
 const ENV: IEnv = {
@@ -18,6 +20,8 @@ const ENV: IEnv = {
       process.env.NOTIFICATION_SERVICE_URL ||
       "http://notification-service:3002",
   },
+  mongodb: process.env.MONGODB || "mongodb://localhost:27017/user-db",
+  port: parseInt(process.env.PORT || "3001"),
 };
 
 export default ENV;
