@@ -104,6 +104,57 @@ services:
       - /usr/src/app/node_modules
     restart: unless-stopped
 
+  # Product Service
+  product-service:
+    build: ./product-service
+    ports:
+      - "3004:3004"
+    environment:
+      - NODE_ENV=development
+      - PORT=3004
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MONGO_URI=mongodb://mongo:27017/product-service
+      - JWT_SECRET=your_jwt_secret_key_change_in_production
+    depends_on:
+      - redis
+      - mongo
+      - kafka
+      - zookeeper
+      - mongo-product
+    networks:
+      - app-network
+    volumes:
+      - ./product-service:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+
+  # Order Service
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=development
+      - PORT=3005
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MONGO_URI=mongodb://mongo:27017/order-service
+      - JWT_SECRET=your_jwt_secret_key_change_in_production
+    depends_on:
+      - redis
+      - mongo
+      - kafka
+      - zookeeper
+      - mongo-order
+    networks:
+      - app-network
+    volumes:
+      - ./order-service:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+
   # Redis
 
   redis:
@@ -132,6 +183,18 @@ services:
     image: mongo:latest
     ports:
       - "27019:27017"
+    networks:
+      - app-network
+  mongo-product:
+    image: mongo:latest
+    ports:
+      - "27020:27017"
+    networks:
+      - app-network
+  mongo-order:
+    image: mongo:latest
+    ports:
+      - "27021:27017"
     networks:
       - app-network
   
