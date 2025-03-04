@@ -1,16 +1,25 @@
 {
   "name": "ecommerce-microservice",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "dev:tsc": "tsc --watch --preserveWatchOutput",
+    "dev:node": "node --enable-source-maps --watch dist/index.js",
+    "dev": "pnpm run \"/dev:/\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/express": "^5.0.0",
     "@types/node": "^22.13.9",
     "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
   }
 }
