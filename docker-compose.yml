@@ -22,6 +22,9 @@ services:
       - redis
     networks:
       - app-network
+    volumes:
+      - ./graphql:/usr/src/app
+      - /usr/src/app/node_modules
     restart: unless-stopped
     
   # User Service
@@ -45,6 +48,9 @@ services:
       - zookeeper
     networks:
       - app-network
+    volumes:
+      - ./user-service:/usr/src/app
+      - /usr/src/app/node_modules
     restart: unless-stopped
 
   # Notification Service
@@ -68,6 +74,9 @@ services:
       - zookeeper
     networks:
       - app-network
+    volumes:
+      - ./notification-service:/usr/src/app
+      - /usr/src/app/node_modules
     restart: unless-stopped
 
   # Recommendation Service
@@ -90,6 +99,9 @@ services:
       - zookeeper
     networks:
       - app-network
+    volumes:
+      - ./recommendation-service:/usr/src/app
+      - /usr/src/app/node_modules
     restart: unless-stopped
 
   # Redis
