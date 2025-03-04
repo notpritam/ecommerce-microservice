@@ -38,7 +38,7 @@ services:
       - PORT=3001
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - MONGO_URI=mongodb://mongo:27017/user-service
+      - MONGO_URI=mongodb://mongo-user:27017/user-db
       - JWT_SECRET=your_jwt_secret_key_change_in_production
       - KAFKA_BROKER=kafka:9092
     depends_on:
@@ -64,7 +64,7 @@ services:
       - PORT=3002
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - MONGO_URI=mongodb://mongo:27017/notification-service
+      - MONGO_URI=mongodb://mongo-notification:27017/notification-service
       - JWT_SECRET=your_jwt_secret_key_change_in_production
       - KAFKA_BROKER=kafka:9092
     depends_on:
@@ -89,7 +89,7 @@ services:
       - PORT=3003
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - MONGO_URI=mongodb://mongo:27017/recommendation-service
+      - MONGO_URI=mongodb://mongo-recommendation:27017/recommendation-service
       - JWT_SECRET=your_jwt_secret_key_change_in_production
       - KAFKA_BROKER=kafka:9092
     depends_on:
@@ -114,11 +114,10 @@ services:
       - PORT=3004
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - MONGO_URI=mongodb://mongo:27017/product-service
+      - MONGO_URI=mongodb://mongo-product:27017/product-service
       - JWT_SECRET=your_jwt_secret_key_change_in_production
     depends_on:
       - redis
-      - mongo
       - kafka
       - zookeeper
       - mongo-product
@@ -140,11 +139,10 @@ services:
       - PORT=3005
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - MONGO_URI=mongodb://mongo:27017/order-service
+      - MONGO_URI=mongodb://mongo-order:27017/order-service
       - JWT_SECRET=your_jwt_secret_key_change_in_production
     depends_on:
       - redis
-      - mongo
       - kafka
       - zookeeper
       - mongo-order
@@ -152,6 +150,31 @@ services:
       - app-network
     volumes:
       - ./order-service:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+
+  # Scheduler Service
+
+  scheduler-service:
+    build: ./scheduler-service
+    ports:
+      - "3006:3006"
+    environment:
+      - NODE_ENV=development
+      - PORT=3006
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MONGO_URI=mongodb://mongo-scheduler:27017/scheduler-service
+      - JWT_SECRET=your_jwt_secret_key_change_in_production
+    depends_on:
+      - redis
+      - kafka
+      - zookeeper
+      - mongo-scheduler
+    networks:
+      - app-network
+    volumes:
+      - ./scheduler-service:/usr/src/app
       - /usr/src/app/node_modules
     restart: unless-stopped
 
@@ -195,6 +218,13 @@ services:
     image: mongo:latest
     ports:
       - "27021:27017"
+    networks:
+      - app-network
+
+  mongo-scheduler:
+    image: mongo:latest
+    ports:
+      - "27022:27017"
     networks:
       - app-network
   

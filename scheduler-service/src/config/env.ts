@@ -20,7 +20,7 @@ const ENV: IEnv = {
       process.env.NOTIFICATION_SERVICE_URL ||
       "http://notification-service:3002",
   },
-  mongodb: process.env.MONGO_URI || "mongodb://mongo-user:27017/user-db",
+  mongodb: process.env.MONGO_URI || "mongodb://mongo-scheduler:27017/user-db",
   port: parseInt(process.env.PORT || "3001"),
 };
 
