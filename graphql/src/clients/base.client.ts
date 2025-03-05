@@ -105,20 +105,15 @@ export class BaseServiceClient {
   }
 
   private handleError(error: any): Error {
-    // You could extend this with custom error types for different status codes
     if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
       return new Error(
         `${this.serviceName} service responded with ${
           error.response.status
         }: ${JSON.stringify(error.response.data)}`
       );
     } else if (error.request) {
-      // The request was made but no response was received
       return new Error(`${this.serviceName} service timeout or no response`);
     } else {
-      // Something happened in setting up the request that triggered an Error
       return new Error(`${this.serviceName} service error: ${error.message}`);
     }
   }

@@ -13,6 +13,7 @@ import { createRateLimiter } from "./middleware/rateLimiter";
 import { authMiddleware } from "./middleware/auth";
 import { initRedis } from "./config/redis";
 import { IUser } from "./types/user.types";
+import { errorHandler, ValidationError } from "./middleware/errorHandler";
 
 const GRAPHQL_PATH = "/graphql";
 const PORT = ENV.port || 4000;
@@ -34,6 +35,33 @@ const server = new ApolloServer({
   resolvers: resolvers,
   introspection: true,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  formatError: (formattedError, error: any) => {
+    const originalError =
+      error instanceof Error ? error : new Error(error.message);
+
+    if (originalError instanceof ValidationError) {
+      return {
+        message: originalError.message,
+        extensions: {
+          code: "BAD_USER_INPUT",
+          http: { status: 400 },
+        },
+      };
+    }
+
+    // For production, don't expose the stacktrace for other errors
+    if (process.env.NODE_ENV === "production") {
+      // Return a sanitized error
+      return {
+        message: originalError.message || "An error occurred",
+        extensions: {
+          code: formattedError.extensions?.code || "INTERNAL_SERVER_ERROR",
+        },
+      };
+    }
+
+    return formattedError;
+  },
 });
 
 const startServer = async () => {
@@ -67,6 +95,8 @@ const startServer = async () => {
       })
     );
 
+    app.use(errorHandler);
+
     // Starting the HTTP server
     await new Promise<void>((resolve) =>
       httpServer.listen({ port: PORT }, resolve)
@@ -78,4 +108,7 @@ const startServer = async () => {
   }
 };
 
-startServer();
+startServer().catch((error) => {
+  logger.error(`Error starting server: ${error}`);
+  process.exit(1);
+});

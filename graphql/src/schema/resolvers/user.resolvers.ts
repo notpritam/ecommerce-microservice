@@ -1,5 +1,6 @@
 import logger from "../../config/logger";
 import { isAuthenticated } from "../../middleware/auth";
+import { ValidationError } from "../../middleware/errorHandler";
 import UserService from "../../services/user.service";
 
 export const userResolvers = {
@@ -41,7 +42,13 @@ export const userResolvers = {
     register: async (_: any, { input }: any) => {
       try {
         return await UserService.createUser(input);
-      } catch (error) {
+      } catch (error: any) {
+        if (
+          error.message &&
+          error.message.includes("E11000 duplicate key error")
+        ) {
+          throw new ValidationError("Email already exists");
+        }
         logger.error("Error in register resolver:", error);
         throw error;
       }

@@ -7,12 +7,17 @@ export const userTypes = gql`
     recommendations: Boolean!
   }
 
+  enum Role {
+    ADMIN
+    USER
+  }
+
   type User {
     _id: ID!
     name: String!
     email: String!
     preferences: UserPreferences!
-    role: String
+    role: Role!
     createdAt: String
     updatedAt: String
   }
