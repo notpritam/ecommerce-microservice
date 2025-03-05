@@ -2,6 +2,7 @@ import logger from "../../config/logger";
 import { isAuthenticated } from "../../middleware/auth";
 import {
   AuthenticationError,
+  AuthorizationError,
   ValidationError,
 } from "../../middleware/errorHandler";
 import UserService from "../../services/user.service";
@@ -68,20 +69,13 @@ export const userResolvers = {
 
     updateUser: async (_: any, { id, input }: any, context: any) => {
       try {
-        // const user = isAuthenticated(context);
+        const user = isAuthenticated(context);
         // Only allow users to update their own info, unless they're an admin
-        // if (user.id !== id && user.role !== "admin") {
-        //   throw new Error("Not authorized to update this user");
-        // }
-        // return await UserService.updateUser(id, input);
+        if (user._id !== id && user.role !== "admin") {
+          throw new AuthorizationError("Not authorized to update this user");
+        }
 
-        logger.info("Update user:", id, input);
-
-        return {
-          id,
-          name: "Test User",
-          email: "",
-        };
+        return await UserService.updateUser(id, input);
       } catch (error) {
         logger.error(`Error in updateUser resolver for ID ${id}:`, error);
         throw error;

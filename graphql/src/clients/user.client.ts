@@ -48,4 +48,12 @@ export class UserServiceClient extends BaseServiceClient {
       throw error;
     }
   }
+
+  async updateUser(user: IUser): Promise<IUser> {
+    try {
+      return this.put<IUser>(`/api/users/${user._id}`, user);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

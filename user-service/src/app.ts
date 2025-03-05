@@ -59,6 +59,27 @@ app.get("/api/users/:id", async (req: Request, res: Response): Promise<any> => {
   }
 });
 
+app.put("/api/users/:id", async (req: Request, res: Response): Promise<any> => {
+  try {
+    const userData = req.body;
+
+    const user = await User.findByIdAndUpdate(req.params.id, userData, {
+      new: true,
+    });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: "User not found", status: 404, success: false });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 app.post("/api/users", async (req, res) => {
   try {
     const { name, password, email } = req.body;

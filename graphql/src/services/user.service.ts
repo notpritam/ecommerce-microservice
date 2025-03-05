@@ -77,6 +77,24 @@ class UserService {
       throw error;
     }
   }
+
+  async updateUser(userId: string, user: IUser): Promise<IUser> {
+    try {
+      logger.info("Update user:", userId);
+
+      user._id = userId;
+
+      const updatedUser = await this.userClient.updateUser(user);
+
+      if (!updatedUser) {
+        throw new Error("Failed to update user");
+      }
+
+      return updatedUser;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const userService = new UserService();
