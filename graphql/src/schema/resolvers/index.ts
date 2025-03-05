@@ -39,5 +39,5 @@ export const resolvers = {
   //   Subscription: {
   //     ...notificationResolvers.Subscription,
   //   },
-  ...userResolvers.Types,
+  // ...userResolvers.Types,
 };

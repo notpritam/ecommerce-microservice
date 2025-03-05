@@ -41,6 +41,10 @@ export const createRateLimiter = (options: Partial<RateLimitConfig>) => {
       return next();
     }
 
+    if (!config.keyGenerator) {
+      return next();
+    }
+
     try {
       const key = config.keyGenerator(req);
 
