@@ -1,18 +1,14 @@
 import logger from "../../config/logger";
-import { UserService } from "../../services/user.service";
-
-const userService = new UserService();
+import { isAuthenticated } from "../../middleware/auth";
+import UserService from "../../services/user.service";
 
 export const userResolvers = {
   Query: {
     // Get current authenticated user
     me: async (_: any, __: any, context: any) => {
       try {
-        logger.info("Me resolver context:", context);
-
-        return context.user;
-        // const user = isAuthenticated(context);
-        // return await UserService.getUserById(user.id);
+        const user = isAuthenticated(context);
+        return await UserService.getUserById(user._id);
       } catch (error) {
         logger.error("Error in me resolver:", error);
         throw error;
@@ -22,7 +18,7 @@ export const userResolvers = {
     getUser: async (_: any, { id }: { id: string }, context: any) => {
       try {
         // isAuthenticated(context);
-        return await userService.getUserById(id);
+        return await UserService.getUserById(id);
       } catch (error) {
         logger.error(`Error in getUser resolver for ID ${id}:`, error);
         throw error;
@@ -32,7 +28,7 @@ export const userResolvers = {
     // Get all users (admin only)
     getAllUsers: async (_: any, __: any, context: any) => {
       try {
-        return await userService.getAllUsers();
+        return await UserService.getAllUsers();
       } catch (error) {
         logger.error("Error in getAllUsers resolver:", error);
         throw error;
@@ -44,14 +40,7 @@ export const userResolvers = {
     // Register a new user
     register: async (_: any, { input }: any) => {
       try {
-        // return await UserService.register(input);
-        logger.info("Register user:", input);
-
-        return {
-          success: true,
-          message: "User registered successfully",
-          token: "",
-        };
+        return await UserService.createUser(input);
       } catch (error) {
         logger.error("Error in register resolver:", error);
         throw error;
@@ -61,14 +50,7 @@ export const userResolvers = {
     // Login a user
     login: async (_: any, { input }: any) => {
       try {
-        // return await UserService.login(input);
-        logger.info("Login user:", input);
-
-        return {
-          success: true,
-          message: "User logged in successfully",
-          token: "",
-        };
+        return await UserService.login(input.email, input.password);
       } catch (error) {
         logger.error("Error in login resolver:", error);
         throw error;

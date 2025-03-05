@@ -42,7 +42,8 @@ export const userTypes = gql`
   }
 
   type AuthResponse {
-    token: String!
+    accessToken: String!
+    refreshToken: String!
     user: User!
   }
 

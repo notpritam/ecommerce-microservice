@@ -1,7 +1,9 @@
 export interface IUser {
   name: string;
-  id: string;
+  _id: string;
   email: string;
+  role: "user" | "admin";
+  password: string;
   preferences: {
     promotions: boolean;
     order_updates: boolean;

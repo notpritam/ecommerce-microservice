@@ -1,14 +1,17 @@
 import { UserServiceClient } from "../clients/user.client";
 import logger from "../config/logger";
+import { generateTokens } from "../middleware/auth";
+import { IAuthResponse } from "../types";
 import { IUser } from "../types/user.types";
 
-export class UserService {
+class UserService {
   private userClient: UserServiceClient;
+
   constructor() {
     this.userClient = new UserServiceClient();
   }
 
-  async getUserById(userId: string): Promise<any> {
+  async getUserById(userId: string): Promise<IUser> {
     try {
       logger.info("Get user by ID:", userId);
 
@@ -37,4 +40,44 @@ export class UserService {
       throw error;
     }
   }
+
+  async createUser(user: IUser): Promise<IAuthResponse> {
+    try {
+      logger.info("Create user:", user);
+
+      const newUser = await this.userClient.createUser(user);
+
+      if (!newUser) {
+        throw new Error("Failed to create user");
+      }
+
+      const token = await generateTokens(user);
+
+      return { user: newUser, ...token };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async login(email: string, password: string): Promise<IAuthResponse> {
+    try {
+      logger.info("Login user:", email);
+
+      const user = await this.userClient.loginUser(email, password);
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const token = await generateTokens(user);
+
+      return { user, ...token };
+    } catch (error) {
+      throw error;
+    }
+  }
 }
+
+const userService = new UserService();
+
+export default userService;

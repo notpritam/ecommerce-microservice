@@ -3,6 +3,7 @@ import jwt, { SignOptions } from "jsonwebtoken";
 import ENV from "../config/env";
 import logger from "../config/logger";
 import { RedisService } from "../services/redis.service";
+import { IUser } from "../types/user.types";
 
 // Extending express request interface to include user
 declare global {
@@ -40,6 +41,7 @@ export const authMiddleware = async (
 
     if (!authHeader) {
       // No token provided, continue without authentication
+      logger.info("No token provided, continuing without authentication");
       return next();
     }
 
@@ -55,6 +57,7 @@ export const authMiddleware = async (
 
     try {
       // Verify the token
+
       const decoded = jwt.verify(token as string, JWT_SECRET) as any;
 
       // Check if token is in blacklist (for logged out tokens)
@@ -112,7 +115,7 @@ export const authMiddleware = async (
 };
 
 // Helper functions for resolvers
-export const isAuthenticated = (context: any) => {
+export const isAuthenticated = (context: any): IUser => {
   if (!context.user) {
     throw new AuthError("Authentication required");
   }
