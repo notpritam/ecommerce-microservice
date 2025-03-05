@@ -9,6 +9,7 @@ import express from "express";
 import http from "http";
 import cors from "cors";
 import { Request, Response } from "express";
+import { createRateLimiter } from "./middleware/rateLimiter";
 
 const GRAPHQL_PATH = "/graphql";
 const PORT = ENV.port || 4000;
@@ -37,11 +38,21 @@ const startServer = async () => {
     await server.start();
     console.log("Apollo Server started successfully!");
 
+    const rateLimiter = createRateLimiter({
+      windowMs: 60 * 1000, // Allowing 100 request in a min
+      max: 100,
+      keyGenerator: (req: any): any => {
+        return req.user?.id || req.ip || req.headers["x-forwarded-for"];
+      },
+      skip: (req: any): boolean => {
+        return req.user?.role === "admin"; // Allowing admin role to skip the rate limit
+      },
+    });
+
     // I am  applying the Appolo GraphQL middleware at the GRAPHQL_PATH
     app.use(
       GRAPHQL_PATH,
-      cors(),
-      express.json(),
+
       expressMiddleware(server, {
         context: async ({ req, res }) => {
           return {

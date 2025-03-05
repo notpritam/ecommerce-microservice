@@ -17,6 +17,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.13.9",
     "typescript": "^5.8.2"
   },
@@ -29,6 +30,8 @@
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",
     "graphql-tools": "^9.0.16",
+    "ioredis": "^5.5.0",
+    "jsonwebtoken": "^9.0.2",
     "winston": "^3.17.0"
   },
   "packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b"

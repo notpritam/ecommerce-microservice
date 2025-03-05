@@ -9,6 +9,14 @@ interface IEnv {
     notificationServiceURL: string;
     userServiceURL: string;
   };
+  redis: {
+    host: string;
+    port: number;
+    password: string;
+  };
+  jwt_secret: string;
+  jwt_expiration: string;
+  refresh_token_expiration: number;
   mongodb: string;
   port?: number;
   kafka_brokers: string;
@@ -25,6 +33,17 @@ const ENV: IEnv = {
       "http://notification-service:3002",
     userServiceURL: process.env.USER_SERVICE_URL || "http://user-service:3001",
   },
+  redis: {
+    host: process.env.REDIS_HOST || "localhost",
+    port: parseInt(process.env.REDIS_PORT || "6379", 10),
+    password: process.env.REDIS_PASSWORD || "",
+  },
+  jwt_secret:
+    process.env.JWT_SECRET || "your_jwt_secret_key_change_in_production",
+  jwt_expiration: process.env.JWT_EXPIRATION || "24h",
+  refresh_token_expiration: parseInt(
+    process.env.REFRESH_TOKEN_EXPIRATION || "2592000"
+  ),
   mongodb:
     process.env.MONGO_URI ||
     "mongodb://mongo-notification:27017/notification-db",
