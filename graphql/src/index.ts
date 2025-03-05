@@ -13,7 +13,7 @@ import { createRateLimiter } from "./middleware/rateLimiter";
 import { authMiddleware } from "./middleware/auth";
 import { initRedis } from "./config/redis";
 import { IUser } from "./types/user.types";
-import { errorHandler, ValidationError } from "./middleware/errorHandler";
+import { ServiceError, ValidationError } from "./middleware/errorHandler";
 
 const GRAPHQL_PATH = "/graphql";
 const PORT = ENV.port || 4000;
@@ -36,30 +36,35 @@ const server = new ApolloServer({
   introspection: true,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   formatError: (formattedError, error: any) => {
-    const originalError =
-      error instanceof Error ? error : new Error(error.message);
+    // Extract the original error
+    const originalError = error.originalError;
 
-    if (originalError instanceof ValidationError) {
+    // If it's our custom service error, format it properly
+    if (originalError instanceof ServiceError) {
       return {
         message: originalError.message,
         extensions: {
-          code: "BAD_USER_INPUT",
-          http: { status: 400 },
+          code: originalError.errorType,
+          http: { status: originalError.statusCode },
+          ...(process.env.NODE_ENV !== "production" && {
+            path: formattedError.path,
+          }),
         },
       };
     }
 
-    // For production, don't expose the stacktrace for other errors
+    // In production, sanitize unknown errors
     if (process.env.NODE_ENV === "production") {
-      // Return a sanitized error
       return {
-        message: originalError.message || "An error occurred",
+        message: "An error occurred",
         extensions: {
-          code: formattedError.extensions?.code || "INTERNAL_SERVER_ERROR",
+          code: "INTERNAL_SERVER_ERROR",
+          http: { status: 500 },
         },
       };
     }
 
+    // In development, return the full error
     return formattedError;
   },
 });
@@ -94,8 +99,6 @@ const startServer = async () => {
         },
       })
     );
-
-    app.use(errorHandler);
 
     // Starting the HTTP server
     await new Promise<void>((resolve) =>

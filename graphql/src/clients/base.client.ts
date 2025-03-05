@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import logger from "../config/logger";
+import { parseServiceError } from "../middleware/errorHandler";
 
 export class BaseServiceClient {
   protected client: AxiosInstance;
@@ -104,17 +105,14 @@ export class BaseServiceClient {
     }
   }
 
-  private handleError(error: any): Error {
-    if (error.response) {
-      return new Error(
-        `${this.serviceName} service responded with ${
-          error.response.status
-        }: ${JSON.stringify(error.response.data)}`
-      );
-    } else if (error.request) {
-      return new Error(`${this.serviceName} service timeout or no response`);
-    } else {
-      return new Error(`${this.serviceName} service error: ${error.message}`);
-    }
+  protected handleError(error: any): never {
+    const serviceError = parseServiceError(error);
+
+    const contextualMessage = `${this.serviceName}: ${serviceError.message}`;
+
+    const ErrorClass = serviceError.constructor as any;
+    const contextualError = new ErrorClass(contextualMessage, error);
+
+    throw contextualError;
   }
 }

@@ -1,6 +1,9 @@
 import logger from "../../config/logger";
 import { isAuthenticated } from "../../middleware/auth";
-import { ValidationError } from "../../middleware/errorHandler";
+import {
+  AuthenticationError,
+  ValidationError,
+} from "../../middleware/errorHandler";
 import UserService from "../../services/user.service";
 
 export const userResolvers = {
@@ -59,12 +62,10 @@ export const userResolvers = {
       try {
         return await UserService.login(input.email, input.password);
       } catch (error) {
-        logger.error("Error in login resolver:", error);
-        throw error;
+        throw new AuthenticationError("Invalid email or password");
       }
     },
 
-    // Update a user (requires authentication)
     updateUser: async (_: any, { id, input }: any, context: any) => {
       try {
         // const user = isAuthenticated(context);

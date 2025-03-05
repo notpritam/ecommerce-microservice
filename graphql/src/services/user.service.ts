@@ -1,6 +1,7 @@
 import { UserServiceClient } from "../clients/user.client";
 import logger from "../config/logger";
 import { generateTokens } from "../middleware/auth";
+import { NotFoundError } from "../middleware/errorHandler";
 import { IAuthResponse } from "../types";
 import { IUser } from "../types/user.types";
 
@@ -18,7 +19,7 @@ class UserService {
       const user = await this.userClient.getUserById(userId);
 
       if (!user) {
-        throw new Error("User not found");
+        throw new NotFoundError("User not found");
       }
 
       return user;
@@ -32,7 +33,7 @@ class UserService {
       const users = await this.userClient.getAllUsers();
 
       if (!users) {
-        throw new Error("No users found");
+        throw new NotFoundError("No users found");
       }
 
       return users;
