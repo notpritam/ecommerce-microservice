@@ -2,7 +2,6 @@ import { BaseServiceClient } from "./base.client";
 import ENV from "../config/env";
 import { IUser } from "../types/user.types";
 import logger from "../config/logger";
-import { IAuthResponse } from "../types";
 
 export class UserServiceClient extends BaseServiceClient {
   constructor() {

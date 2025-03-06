@@ -1,5 +1,3 @@
-// notification-service/src/kafka/consumers/task.consumer.ts
-
 import { Kafka, Consumer } from "kafkajs";
 import logger from "../../config/logger";
 import ENV from "../../config/env";

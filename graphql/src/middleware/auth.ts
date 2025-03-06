@@ -4,6 +4,7 @@ import ENV from "../config/env";
 import logger from "../config/logger";
 import { RedisService } from "../services/redis.service";
 import { IUser } from "../types/user.types";
+import { AuthenticationError, AuthorizationError } from "./errorHandler";
 
 // Extending express request interface to include user
 declare global {
@@ -117,7 +118,7 @@ export const authMiddleware = async (
 // Helper functions for resolvers
 export const isAuthenticated = (context: any): IUser => {
   if (!context.user) {
-    throw new AuthError("Authentication required");
+    throw new AuthenticationError("Authentication required");
   }
   return context.user;
 };
@@ -128,7 +129,7 @@ export const hasRole = (context: any, requiredRole: string | string[]) => {
   const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
 
   if (!user.role || !roles.includes(user.role)) {
-    throw new AuthError("Insufficient permissions", 403);
+    throw new AuthorizationError("Insufficient permissions", 403);
   }
 
   return user;

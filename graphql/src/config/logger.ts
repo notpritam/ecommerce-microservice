@@ -77,7 +77,3 @@ export const morganStream = {
 };
 
 export default logger;
-
-// Example usage:
-// logger.info("User data:", { name: "John", age: 30, address: { city: "New York", zip: 10001 } });
-// logger.debug({ complex: { object: { with: { nested: "values" } } } });

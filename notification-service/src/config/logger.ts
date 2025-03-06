@@ -23,7 +23,30 @@ const colors = {
 
 winston.addColors(colors);
 
+// Custom format that pretty-prints objects
+const prettyJson = winston.format((info) => {
+  // Check if the message contains an object to stringify
+  if (info.message && typeof info.message === "object") {
+    info.message = JSON.stringify(info.message, null, 2);
+  }
+
+  // Handle additional metadata objects
+  const splat = info[Symbol.for("splat")] as unknown[];
+  if (splat && Array.isArray(splat) && splat.length > 0) {
+    const objects = splat.map((item) =>
+      typeof item === "object" && item !== null
+        ? JSON.stringify(item, null, 2)
+        : item
+    );
+    info.message = `${info.message} ${objects.join(" ")}`;
+  }
+
+  return info;
+});
+
+// Combine formats
 const format = winston.format.combine(
+  prettyJson(),
   winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss:ms" }),
   winston.format.colorize({ all: true }),
   winston.format.printf(

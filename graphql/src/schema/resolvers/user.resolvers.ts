@@ -1,5 +1,5 @@
 import logger from "../../config/logger";
-import { isAuthenticated } from "../../middleware/auth";
+import { hasRole, isAuthenticated } from "../../middleware/auth";
 import {
   AuthenticationError,
   AuthorizationError,
@@ -22,7 +22,7 @@ export const userResolvers = {
 
     getUser: async (_: any, { id }: { id: string }, context: any) => {
       try {
-        // isAuthenticated(context);
+        isAuthenticated(context);
         return await UserService.getUserById(id);
       } catch (error) {
         logger.error(`Error in getUser resolver for ID ${id}:`, error);
@@ -33,6 +33,7 @@ export const userResolvers = {
     // Get all users (admin only)
     getAllUsers: async (_: any, __: any, context: any) => {
       try {
+        hasRole(context, "admin");
         return await UserService.getAllUsers();
       } catch (error) {
         logger.error("Error in getAllUsers resolver:", error);
