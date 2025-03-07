@@ -4,8 +4,8 @@ import logger from "../config/logger";
 import kafkaProducer from "../kafka/producers/producer";
 import { Types } from "mongoose";
 
-class NotificationController {
-  public async createNotification(req: Request, res: Response) {
+export class NotificationController {
+  public async createNotification(req: Request, res: Response): Promise<any> {
     try {
       const { userId, type, content, expiresAt } = req.body;
 
@@ -54,6 +54,136 @@ class NotificationController {
       return res
         .status(500)
         .json({ message: "Failed to create notification", success: false });
+    }
+  }
+
+  public async getUserNotifications(req: Request, res: Response): Promise<any> {
+    try {
+      const { userId } = req.params;
+
+      if (!userId) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      const notifications = await Notification.find({
+        userId: userId,
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: notifications,
+        message: "Notifications fetched successfully",
+      });
+    } catch (error: any) {
+      logger.error("Error fetching notifications", error.message);
+      return res
+        .status(500)
+        .json({ message: "Failed to fetch notifications", success: false });
+    }
+  }
+
+  public async markAsRead(req: Request, res: Response): Promise<any> {
+    try {
+      const { userId } = req.params;
+
+      if (!userId) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      await Notification.updateMany(
+        { userId: userId },
+        { read: true },
+        { multi: true }
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: "Notifications marked as read successfully",
+      });
+    } catch (error: any) {
+      logger.error("Error marking notifications as read", error.message);
+      return res.status(500).json({
+        message: "Failed to mark notifications as read",
+        success: false,
+      });
+    }
+  }
+
+  public async deleteNotification(req: Request, res: Response): Promise<any> {
+    try {
+      const { notificationId } = req.params;
+
+      if (!notificationId) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      await Notification.deleteOne({ _id: notificationId });
+
+      return res.status(200).json({
+        success: true,
+        message: "Notification deleted successfully",
+      });
+    } catch (error: any) {
+      logger.error("Error deleting notification", error.message);
+      return res
+        .status(500)
+        .json({ message: "Failed to delete notification", success: false });
+    }
+  }
+
+  public async getUnreadCount(req: Request, res: Response): Promise<any> {
+    try {
+      const { userId } = req.params;
+
+      if (!userId) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      const count = await Notification.countDocuments({
+        userId: userId,
+        read: false,
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: count,
+        message: "Unread notifications count fetched successfully",
+      });
+    } catch (error: any) {
+      logger.error("Error fetching unread notifications count", error.message);
+      return res.status(500).json({
+        message: "Failed to fetch unread notifications count",
+        success: false,
+      });
+    }
+  }
+
+  public async getNotificationsByType(
+    req: Request,
+    res: Response
+  ): Promise<any> {
+    try {
+      const { userId, type } = req.params;
+
+      if (!userId || !type) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      const notifications = await Notification.find({
+        userId: userId,
+        type: type,
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: notifications,
+        message: "Notifications fetched successfully",
+      });
+    } catch (error: any) {
+      logger.error("Error fetching notifications", error.message);
+      return res
+        .status(500)
+        .json({ message: "Failed to fetch notifications", success: false });
     }
   }
 }
