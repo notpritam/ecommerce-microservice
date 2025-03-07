@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import Notification from "../models/notification.model";
 import logger from "../config/logger";
+import kafkaProducer from "../kafka/producers/producer";
+import { Types } from "mongoose";
 
 class NotificationController {
   public async createNotification(req: Request, res: Response) {
@@ -21,6 +23,26 @@ class NotificationController {
       });
 
       await notification.save();
+
+      // I am now pushing the notification to the Kafka topic so other service can consume it
+
+      await kafkaProducer.send({
+        topic: "notification",
+        messages: [
+          {
+            key: userId,
+            value: JSON.stringify({
+              id: notification._id,
+              userId: notification.userId,
+              type: notification.type,
+              content: notification.content,
+              sentAt: notification.sentAt,
+            }),
+          },
+        ],
+      });
+
+      // TODO : now i will need to store this notification in the redis database to access it faster
 
       return res.status(201).json({
         success: true,
