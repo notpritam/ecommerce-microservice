@@ -37,7 +37,7 @@ export const resolvers = {
   Mutation: {
     _: () => true,
     ...userResolvers.Mutation,
-    // ...notificationResolvers.Mutation,
+    ...notificationResolvers.Mutation,
   },
   //   Subscription: {
   //     ...notificationResolvers.Subscription,

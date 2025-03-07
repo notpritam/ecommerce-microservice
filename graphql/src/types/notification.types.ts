@@ -4,5 +4,5 @@ export interface INotification {
   content: any;
   read: boolean;
   sentAt: Date;
-  expiresAt?: Date;
+  expiresAt: Date;
 }

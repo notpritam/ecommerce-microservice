@@ -27,8 +27,8 @@ export class NotificationServiceClient extends BaseServiceClient {
 
   async createNotification(
     notificationData: Partial<INotification>
-  ): Promise<INotification> {
-    return this.post<INotification>("/", notificationData);
+  ): Promise<IApiResponse<INotification>> {
+    return this.post<IApiResponse<INotification>>("/", notificationData);
   }
 
   async markNotificationAsRead(notificationId: string): Promise<INotification> {

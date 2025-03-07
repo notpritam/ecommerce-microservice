@@ -47,6 +47,58 @@ class NotificationService {
       return 0;
     }
   }
+
+  async markNotificationAsRead(notificationId: string): Promise<INotification> {
+    try {
+      const response = await this.notificationClient.markNotificationAsRead(
+        notificationId
+      );
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async markAsRead(userId: string): Promise<INotification> {
+    try {
+      const response = await this.notificationClient.markAsRead(userId);
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteNotification(notificationId: string): Promise<INotification> {
+    try {
+      const response = await this.notificationClient.deleteNotification(
+        notificationId
+      );
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createNotification(
+    notificationData: Partial<INotification>
+  ): Promise<INotification> {
+    try {
+      const response = await this.notificationClient.createNotification(
+        notificationData
+      );
+
+      if (!response.success) {
+        throw new Error(response.error);
+      }
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const notificationService = new NotificationService();

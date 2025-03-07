@@ -2,12 +2,13 @@ import { Request, Response } from "express";
 import Notification from "../models/notification.model";
 import logger from "../config/logger";
 import kafkaProducer from "../kafka/producers/producer";
-import { Types } from "mongoose";
 
 export class NotificationController {
   public async createNotification(req: Request, res: Response): Promise<any> {
     try {
       const { userId, type, content, expiresAt } = req.body;
+
+      console.log("userId", userId);
 
       if (!userId || !type || !content || !expiresAt) {
         return res.status(400).json({ message: "Missing required fields" });
@@ -26,21 +27,21 @@ export class NotificationController {
 
       // I am now pushing the notification to the Kafka topic so other service can consume it
 
-      await kafkaProducer.send({
-        topic: "notification",
-        messages: [
-          {
-            key: userId,
-            value: JSON.stringify({
-              id: notification._id,
-              userId: notification.userId,
-              type: notification.type,
-              content: notification.content,
-              sentAt: notification.sentAt,
-            }),
-          },
-        ],
-      });
+      // await kafkaProducer.send({
+      //   topic: "notification",
+      //   messages: [
+      //     {
+      //       key: userId,
+      //       value: JSON.stringify({
+      //         id: notification._id,
+      //         userId: notification.userId,
+      //         type: notification.type,
+      //         content: notification.content,
+      //         sentAt: notification.sentAt,
+      //       }),
+      //     },
+      //   ],
+      // });
 
       // TODO : now i will need to store this notification in the redis database to access it faster
 

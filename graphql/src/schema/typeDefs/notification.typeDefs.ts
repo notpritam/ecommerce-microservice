@@ -21,6 +21,7 @@ export const notificationTypes = gql`
     userId: ID!
     type: NotificationType!
     content: JSON!
+    expiresAt: String!
   }
 
   input NotificationFilterInput {
@@ -40,5 +41,11 @@ export const notificationTypes = gql`
   extend type Query {
     getUserNotifications(userID: ID!, limit: Int, offset: Int): [Notification!]!
     getUnreadNotificationCount(userID: ID!): Int!
+    markAsRead(userID: ID!): Boolean!
+    markNotificationAsRead(notificationID: ID!): Boolean!
+  }
+
+  extend type Mutation {
+    createNotification(input: NotificationInput!): Notification!
   }
 `;
