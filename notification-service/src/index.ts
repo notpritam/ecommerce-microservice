@@ -10,13 +10,13 @@ const PORT = ENV.port || 3002;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/notification", notificationRouter);
+app.use("/api/notifications", notificationRouter);
 
 const startServer = async () => {
   try {
     await connectDB();
     app.listen(PORT, () => {
-      console.log(`Notification service is running on port ${PORT}`);
+      console.log(`Notification service is running on the port ${PORT}`);
     });
   } catch (error) {}
 };

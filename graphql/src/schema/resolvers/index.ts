@@ -1,5 +1,6 @@
 import { GraphQLScalarType, Kind } from "graphql";
 import { userResolvers } from "./user.resolvers";
+import { notificationResolvers } from "./notification.resolvers";
 
 const JSONScalar = new GraphQLScalarType({
   name: "JSON",
@@ -31,10 +32,12 @@ export const resolvers = {
   Query: {
     _: () => true,
     ...userResolvers.Query,
+    ...notificationResolvers.Query,
   },
   Mutation: {
     _: () => true,
     ...userResolvers.Mutation,
+    // ...notificationResolvers.Mutation,
   },
   //   Subscription: {
   //     ...notificationResolvers.Subscription,

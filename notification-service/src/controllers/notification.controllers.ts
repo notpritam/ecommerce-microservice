@@ -61,6 +61,8 @@ export class NotificationController {
     try {
       const { userId } = req.params;
 
+      console.log("userId", userId);
+
       if (!userId) {
         return res.status(400).json({ message: "Missing required fields" });
       }
@@ -104,6 +106,32 @@ export class NotificationController {
       logger.error("Error marking notifications as read", error.message);
       return res.status(500).json({
         message: "Failed to mark notifications as read",
+        success: false,
+      });
+    }
+  }
+
+  public async markNotificationAsRead(
+    req: Request,
+    res: Response
+  ): Promise<any> {
+    try {
+      const { notificationId } = req.params;
+
+      if (!notificationId) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      await Notification.updateOne({ _id: notificationId }, { read: true });
+
+      return res.status(200).json({
+        success: true,
+        message: "Notification marked as read successfully",
+      });
+    } catch (error: any) {
+      logger.error("Error marking notification as read", error.message);
+      return res.status(500).json({
+        message: "Failed to mark notification as read",
         success: false,
       });
     }

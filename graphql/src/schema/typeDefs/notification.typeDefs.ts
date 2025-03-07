@@ -7,8 +7,6 @@ export const notificationTypes = gql`
     recommendation
   }
 
-  scaler JSON
-
   type Notification {
     _id: ID!
     userId: ID!
@@ -33,31 +31,14 @@ export const notificationTypes = gql`
     endDate: String
   }
 
-  type NotificationPage{
+  type NotificationPage {
     notifications: [Notification!]!
     total: Int!
     hasNexPage: Boolean!
   }
 
-  type NotificationStats {
-    totalCount: Int!
-    unreadCount: Int!
-    readCount: Int!
-    byType: NotificationTypeStats!
-  }
-
   extend type Query {
-    getNotification(id: ID!): Notification
-    getNotifications(filter: NotificationFilterInput, limit: Int, page: Int): NotificationPage
-    getNotificationStats(userID: ID!): NotificationStats!
-    getUserNotification(userID: ID!, limit: Int, offset: Int): [Notification!]!
+    getUserNotifications(userID: ID!, limit: Int, offset: Int): [Notification!]!
+    getUnreadNotificationCount(userID: ID!): Int!
   }
-
-  extend type Mutation {
-    createNotification(input: NotificationInput!): Notification!
-    markAsRead(id: ID!): Notification!
-    markAllAsRead(userID: ID!): Boolean!
-    deleteNotification(id: ID!): Boolean!
-  }
-
 `;

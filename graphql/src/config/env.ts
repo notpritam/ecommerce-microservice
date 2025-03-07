@@ -30,7 +30,7 @@ const ENV: IEnv = {
     productServiceURL: "",
     notificationServiceURL:
       process.env.NOTIFICATION_SERVICE_URL ||
-      "http://notification-service:3002",
+      "http://notification-service:3002/api/notifications",
     userServiceURL: process.env.USER_SERVICE_URL || "http://user-service:3001",
   },
   redis: {
