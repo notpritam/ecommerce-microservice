@@ -174,6 +174,8 @@ export class NotificationController {
         type: type,
       });
 
+      // TODO : add in cache of redis so we can access it faster
+
       return res.status(200).json({
         success: true,
         data: notifications,
