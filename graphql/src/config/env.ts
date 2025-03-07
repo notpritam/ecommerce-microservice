@@ -24,12 +24,13 @@ interface IEnv {
   kafka_group_id: string;
 }
 
+// TODO : update the env to include the api route as in the ENV
+
 const ENV: IEnv = {
   services: {
     orderServiceURL: "",
     productServiceURL: "",
     notificationServiceURL:
-      process.env.NOTIFICATION_SERVICE_URL ||
       "http://notification-service:3002/api/notifications",
     userServiceURL: process.env.USER_SERVICE_URL || "http://user-service:3001",
   },

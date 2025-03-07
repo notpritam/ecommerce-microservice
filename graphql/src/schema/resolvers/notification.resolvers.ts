@@ -6,15 +6,16 @@ export const notificationResolvers = {
   Query: {
     getUserNotifications: async (
       _: any,
-      { userId }: { userId: string },
+      { userID }: { userID: string },
       context: any
     ) => {
       try {
         isAuthenticated(context);
-        return await NotificationService.getUserNotifications(userId);
+
+        return await NotificationService.getUserNotifications(userID);
       } catch (error) {
         logger.error(
-          `Error in getNotification resolver for ID ${userId}:`,
+          `Error in getNotification resolver for ID ${userID}:`,
           error
         );
         throw error;
@@ -25,9 +26,8 @@ export const notificationResolvers = {
       { userId }: { userId: string },
       context: any
     ) => {
-      console.log("Calling Resolvers", userId);
       try {
-        console.log("userId", userId);
+        isAuthenticated(context);
 
         const data = await NotificationService.getUnreadNotificationCount(
           userId

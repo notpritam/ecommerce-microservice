@@ -71,6 +71,8 @@ export class NotificationController {
         userId: userId,
       });
 
+      console.log("notifications", notifications);
+
       return res.status(200).json({
         success: true,
         data: notifications,

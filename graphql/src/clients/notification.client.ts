@@ -12,10 +12,17 @@ export class NotificationServiceClient extends BaseServiceClient {
   async getNotificationsByUserId(
     userId: string,
     options?: { read?: boolean }
-  ): Promise<INotification[]> {
-    return this.get<INotification[]>(`/user/${userId}`, {
-      params: options,
-    });
+  ): Promise<IApiResponse<INotification[]>> {
+    const data = await this.get<IApiResponse<INotification[]>>(
+      `/user/${userId}`,
+      {
+        params: options,
+      }
+    );
+
+    console.log("data", data);
+
+    return data;
   }
 
   async createNotification(

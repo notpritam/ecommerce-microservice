@@ -11,10 +11,15 @@ class NotificationService {
     this.notificationClient = new NotificationServiceClient();
   }
 
-  async getUserNotifications(userId: string): Promise<INotification[]> {
+  async getUserNotifications(userID: string): Promise<INotification[]> {
     try {
-      logger.info("Get user notifications:", userId);
-      return await this.notificationClient.getNotificationsByUserId(userId);
+      const response = await this.notificationClient.getNotificationsByUserId(
+        userID
+      );
+
+      console.log("response", response);
+
+      return response.data;
     } catch (error) {
       throw error;
     }
@@ -28,19 +33,17 @@ class NotificationService {
 
       console.log("notificationCount", response);
 
-      // Make sure we return a valid number, even if the response is unexpected
       if (response && response.data !== undefined && response.data !== null) {
         return response.data;
       } else {
         logger.warn(`No valid unread count data returned for user ${userId}`);
-        return 0; // Return 0 as a default value if data is missing
+        return 0;
       }
     } catch (error) {
       logger.error(
         `Error getting unread notification count for ${userId}:`,
         error
       );
-      // Return 0 instead of throwing, so GraphQL doesn't fail on this non-nullable field
       return 0;
     }
   }
