@@ -1,6 +1,7 @@
 import { gql } from "graphql-tag";
 import { userTypes } from "./user.typeDefs";
 import { notificationTypes } from "./notification.typeDefs";
+import { activityTypeDefs } from "./activity.typeDefs";
 
 const baseSchema = gql`
   type Query {
@@ -14,4 +15,9 @@ const baseSchema = gql`
   scalar JSON
 `;
 
-export const typeDefs = [baseSchema, userTypes, notificationTypes];
+export const typeDefs = [
+  baseSchema,
+  userTypes,
+  notificationTypes,
+  activityTypeDefs,
+];

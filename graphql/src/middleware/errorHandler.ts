@@ -78,6 +78,12 @@ export class ExternalServiceError extends ServiceError {
   }
 }
 
+export class UserInputError extends ServiceError {
+  constructor(message: string, originalError?: any) {
+    super(message, 400, ErrorType.VALIDATION, originalError);
+  }
+}
+
 export class DatabaseError extends ServiceError {
   constructor(message: string, originalError?: any) {
     super(message, 500, ErrorType.DATABASE, originalError);
