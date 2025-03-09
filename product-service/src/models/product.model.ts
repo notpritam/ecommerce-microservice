@@ -7,6 +7,7 @@ export interface IProduct extends Document {
   categories: string[];
   tags: string[];
   inStock: boolean;
+  images: string[];
   createdAt: Date;
 }
 
@@ -24,6 +25,9 @@ const ProductSchema: Schema = new Schema(
     price: {
       type: Number,
       required: true,
+    },
+    images: {
+      type: [String],
     },
     categories: [
       {
