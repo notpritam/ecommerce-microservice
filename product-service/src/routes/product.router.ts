@@ -1,9 +1,10 @@
 import { Router } from "express";
+import { ProductController } from "../controllers/product.controller";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.send("Product service is running");
-});
+const productController = new ProductController();
+
+router.get("/", productController.getProducts);
 
 export default router;
