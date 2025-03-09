@@ -12,6 +12,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/products", productRouter);
 
+app.use("/", (req, res) => {
+  res.send("Product Service is running");
+});
+
 const startServer = async () => {
   try {
     await connectDB();
