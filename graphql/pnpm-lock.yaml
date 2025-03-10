@@ -38,6 +38,9 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
+      shared-types:
+        specifier: link:../shared-types
+        version: link:../shared-types
       winston:
         specifier: ^3.17.0
         version: 3.17.0

@@ -2,7 +2,6 @@ import express from "express";
 import ENV from "./config/env";
 import connectDB from "./config/db";
 import productRouter from "./routes/product.router";
-import { populateDatabaseWithDemoProducts } from "./utils/dummy";
 
 const app = express();
 

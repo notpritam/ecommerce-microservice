@@ -12,8 +12,8 @@ import { Request, Response } from "express";
 import { createRateLimiter } from "./middleware/rateLimiter";
 import { authMiddleware } from "./middleware/auth";
 import { initRedis } from "./config/redis";
-import { IUser } from "./types/user.types";
 import { ServiceError, ValidationError } from "./middleware/errorHandler";
+import { IUser } from "shared-types";
 
 const GRAPHQL_PATH = "/graphql";
 const PORT = ENV.port || 4000;
