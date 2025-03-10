@@ -22,6 +22,18 @@ export const activityTypeDefs = gql`
     message: String
   }
 
+  type Product {
+    id: ID!
+    name: String!
+    description: String
+    images: [String]
+    price: Float!
+    categories: [String]
+    tags: [String]
+    inStock: Boolean!
+    createdAt: String!
+  }
+
   extend type Mutation {
     trackActivity(input: TrackActivityInput!): TrackActivityResponse!
   }
@@ -32,10 +44,9 @@ export const activityTypeDefs = gql`
     categoryId: ID
     searchQuery: String
     activityType: ActivityType!
-    timestamp: DateTime!
-    # Include product/category information if available
+    timestamp: String!
     product: Product
-    category: Category
+    category: String
   }
 
   extend type Query {

@@ -39,8 +39,8 @@ importers:
         specifier: ^9.0.2
         version: 9.0.2
       shared-types:
-        specifier: link:../shared-types
-        version: link:../shared-types
+        specifier: file:../shared-types
+        version: file:../shared-types
       winston:
         specifier: ^3.17.0
         version: 3.17.0
@@ -819,6 +819,9 @@ packages:
   sha.js@2.4.11:
     resolution: {integrity: sha512-QMEp5B7cftE7APOjk5Y6xgrbWu+WkLVQwk8JNjZ8nKRciZaByEW6MubieAiToS7+dwvrjGhH8jRXz3MVd0AYqQ==}
     hasBin: true
+
+  shared-types@file:../shared-types:
+    resolution: {directory: ../shared-types, type: directory}
 
   side-channel-list@1.0.0:
     resolution: {integrity: sha512-FCLHtRD/gnpCiCHEiJLOwdmFP+wzCmDEkc9y7NsYxeF4u7Btsn1ZuwgwJGxImImHicJArLP4R0yX4c2KCrMrTA==}
@@ -1777,6 +1780,8 @@ snapshots:
     dependencies:
       inherits: 2.0.4
       safe-buffer: 5.2.1
+
+  shared-types@file:../shared-types: {}
 
   side-channel-list@1.0.0:
     dependencies:
