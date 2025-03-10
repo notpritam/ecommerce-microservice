@@ -38,9 +38,9 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
-      shared-types:
-        specifier: file:../shared-types
-        version: file:../shared-types
+      kafkajs:
+        specifier: ^2.2.4
+        version: 2.2.4
       winston:
         specifier: ^3.17.0
         version: 3.17.0
@@ -611,6 +611,10 @@ packages:
   jws@3.2.2:
     resolution: {integrity: sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==}
 
+  kafkajs@2.2.4:
+    resolution: {integrity: sha512-j/YeapB1vfPT2iOIUn/vxdyKEuhuY2PxMBvf5JWux6iSaukAccrMtXEY/Lb7OvavDhOWME589bpLrEdnVHjfjA==}
+    engines: {node: '>=14.0.0'}
+
   kuler@2.0.0:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
 
@@ -819,9 +823,6 @@ packages:
   sha.js@2.4.11:
     resolution: {integrity: sha512-QMEp5B7cftE7APOjk5Y6xgrbWu+WkLVQwk8JNjZ8nKRciZaByEW6MubieAiToS7+dwvrjGhH8jRXz3MVd0AYqQ==}
     hasBin: true
-
-  shared-types@file:../shared-types:
-    resolution: {directory: ../shared-types, type: directory}
 
   side-channel-list@1.0.0:
     resolution: {integrity: sha512-FCLHtRD/gnpCiCHEiJLOwdmFP+wzCmDEkc9y7NsYxeF4u7Btsn1ZuwgwJGxImImHicJArLP4R0yX4c2KCrMrTA==}
@@ -1598,6 +1599,8 @@ snapshots:
       jwa: 1.4.1
       safe-buffer: 5.2.1
 
+  kafkajs@2.2.4: {}
+
   kuler@2.0.0: {}
 
   lodash.defaults@4.2.0: {}
@@ -1780,8 +1783,6 @@ snapshots:
     dependencies:
       inherits: 2.0.4
       safe-buffer: 5.2.1
-
-  shared-types@file:../shared-types: {}
 
   side-channel-list@1.0.0:
     dependencies:

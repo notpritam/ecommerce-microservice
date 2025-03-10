@@ -14,6 +14,7 @@ import { authMiddleware } from "./middleware/auth";
 import { initRedis } from "./config/redis";
 import { ServiceError } from "./middleware/errorHandler";
 import { IUser } from "./types/user.types";
+import { connectProducer, producer } from "./config/kafka";
 
 const GRAPHQL_PATH = "/graphql";
 const PORT = ENV.port || 4000;
@@ -73,6 +74,7 @@ const startServer = async () => {
   try {
     await server.start();
     await initRedis();
+    await connectProducer();
     console.log("Apollo Server started successfully!");
 
     const rateLimiter = createRateLimiter({
@@ -114,4 +116,12 @@ const startServer = async () => {
 startServer().catch((error) => {
   logger.error(`Error starting server: ${error}`);
   process.exit(1);
+});
+
+process.on("SIGTERM", async () => {
+  logger.info("SIGTERM signal received: closing HTTP server");
+  httpServer.close(() => {
+    logger.info("HTTP server closed");
+  });
+  await producer.disconnect();
 });

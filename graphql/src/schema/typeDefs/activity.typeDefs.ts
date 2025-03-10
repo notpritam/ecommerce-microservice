@@ -11,7 +11,7 @@ export const activityTypeDefs = gql`
 
   input TrackActivityInput {
     productId: ID
-    categoryId: ID
+    categories: [String]
     searchQuery: String
     activityType: ActivityType!
     metadata: JSON

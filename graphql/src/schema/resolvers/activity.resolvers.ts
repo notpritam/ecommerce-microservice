@@ -1,3 +1,4 @@
+import { producer } from "../../config/kafka";
 import logger from "../../config/logger";
 import {
   AuthenticationError,
@@ -19,7 +20,6 @@ export const activityResolvers = {
         input;
       const userId = context.user.id;
 
-      // Validate input based on activity type
       if (activityType === "VIEW_PRODUCT" && !productId) {
         throw new UserInputError(
           "productId is required for VIEW_PRODUCT activity"
@@ -31,7 +31,6 @@ export const activityResolvers = {
       }
 
       try {
-        // Create activity payload
         const activityPayload = {
           userId,
           productId,
@@ -42,20 +41,15 @@ export const activityResolvers = {
           metadata: metadata || {},
         };
 
-        // Send to Kafka
-
-        // TODO : Link to Kafka here to send activity data
-
-        // await producer.send({
-        //   topic: ACTIVITY_TOPIC,
-        //   messages: [
-        //     {
-        //       // Use userId as key for partitioning
-        //       key: userId,
-        //       value: JSON.stringify(activityPayload),
-        //     },
-        //   ],
-        // });
+        await producer.send({
+          topic: ACTIVITY_TOPIC,
+          messages: [
+            {
+              key: userId,
+              value: JSON.stringify(activityPayload),
+            },
+          ],
+        });
 
         return {
           success: true,
