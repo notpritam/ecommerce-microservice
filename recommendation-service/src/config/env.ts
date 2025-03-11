@@ -19,7 +19,7 @@ interface IEnv {
   refresh_token_expiration: number;
   mongodb: string;
   port?: number;
-  kafka_brokers: string;
+  kafka_brokers: string[];
   kafka_client_id: string;
   kafka_group_id: string;
 }
@@ -48,10 +48,10 @@ const ENV: IEnv = {
   ),
   mongodb:
     process.env.MONGO_URI ||
-    "mongodb://mongo-notification:27017/notification-db",
-  port: parseInt(process.env.PORT || "4000"),
-  kafka_brokers: process.env.KAFKA_BROKERS || "localhost:9092",
-  kafka_client_id: process.env.KAFKA_CLIENT_ID || "notification-service",
+    "mongodb://mongo-recommendation:27017/recommendation-db",
+  port: parseInt(process.env.PORT || "3003"),
+  kafka_brokers: [process.env.KAFKA_BROKER || "localhost:9092"],
+  kafka_client_id: "recommendation-service",
   kafka_group_id:
     process.env.KAFKA_GROUP_ID || "notification-service-tasks-group",
 };

@@ -7,10 +7,11 @@ import {
 } from "../../models/userActivity.model";
 import { redisService } from "../../config/redis";
 import { UserInterest } from "../../models/userInterest.model";
+import ENV from "../../config/env";
 
 const kafka = new Kafka({
-  clientId: "recommendation-service",
-  brokers: process.env.KAFKA_BROKERS?.split(",") || ["localhost:9092"],
+  clientId: ENV.kafka_client_id,
+  brokers: ENV.kafka_brokers,
 });
 
 const consumer = kafka.consumer({ groupId: "recommendation-service-activity" });
@@ -31,7 +32,6 @@ export const startActivityConsumer = async (): Promise<void> => {
 
           const activityData = JSON.parse(message.value.toString());
 
-          // Process the activity
           await processUserActivity(activityData);
         } catch (error) {
           logger.error("Error processing activity message", {
@@ -44,12 +44,10 @@ export const startActivityConsumer = async (): Promise<void> => {
     });
   } catch (error) {
     logger.error("Error starting activity consumer", error);
-    // Retry connection after delay
     setTimeout(startActivityConsumer, 5000);
   }
 };
 
-// Shutdown consumer gracefully
 export const stopActivityConsumer = async (): Promise<void> => {
   try {
     await consumer.disconnect();
@@ -69,11 +67,9 @@ async function processUserActivity(data: any): Promise<void> {
   }
 
   try {
-    // Get the weight for this activity type
     const activityEnum = activityType as ActivityType;
     const weight = activityWeights[activityEnum] || 1;
 
-    // Store in MongoDB
     const activity = new UserActivity({
       userId,
       productId,

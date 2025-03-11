@@ -66,7 +66,7 @@ services:
       - PORT=3002
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - MONGO_URI=mongodb://mongo-notification:27017/notification-service
+      - MONGO_URI=mongodb://mongo-notification:27017/notification-db
       - JWT_SECRET=your_jwt_secret_key_change_in_production
       - KAFKA_BROKER=kafka:9092
     depends_on:
@@ -92,7 +92,7 @@ services:
       - PORT=3003
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - MONGO_URI=mongodb://mongo-recommendation:27017/recommendation-service
+      - MONGO_URI=mongodb://mongo-recommendation:27017/recommendation-db
       - JWT_SECRET=your_jwt_secret_key_change_in_production
       - KAFKA_BROKER=kafka:9092
     depends_on:
@@ -118,7 +118,7 @@ services:
       - PORT=3004
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - MONGO_URI=mongodb://mongo-product:27017/product-service
+      - MONGO_URI=mongodb://mongo-product:27017/product-db
       - JWT_SECRET=your_jwt_secret_key_change_in_production
     depends_on:
       - redis
@@ -144,7 +144,7 @@ services:
       - PORT=3005
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - MONGO_URI=mongodb://mongo-order:27017/order-service
+      - MONGO_URI=mongodb://mongo-order:27017/order-db
       - JWT_SECRET=your_jwt_secret_key_change_in_production
     depends_on:
       - redis
@@ -170,7 +170,7 @@ services:
       - PORT=3006
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - MONGO_URI=mongodb://mongo-scheduler:27017/scheduler-service
+      - MONGO_URI=mongodb://mongo-scheduler:27017/scheduler-db
       - JWT_SECRET=your_jwt_secret_key_change_in_production
     depends_on:
       - redis
