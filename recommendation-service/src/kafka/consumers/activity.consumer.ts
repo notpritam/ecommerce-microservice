@@ -31,6 +31,7 @@ export const startActivityConsumer = async (): Promise<void> => {
           if (!message.value) return;
 
           const activityData = JSON.parse(message.value.toString());
+          logger.info("Received activity message", { activityData });
 
           await processUserActivity(activityData);
         } catch (error) {
@@ -56,7 +57,6 @@ export const stopActivityConsumer = async (): Promise<void> => {
   }
 };
 
-// Process incoming user activity
 async function processUserActivity(data: any): Promise<void> {
   const { userId, productId, categoryId, activityType, timestamp, metadata } =
     data;
@@ -99,7 +99,6 @@ async function processUserActivity(data: any): Promise<void> {
 
 export async function updateUserInterests(userId: string): Promise<void> {
   try {
-    // Get recent activities from MongoDB (last 30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -108,10 +107,8 @@ export async function updateUserInterests(userId: string): Promise<void> {
       timestamp: { $gte: thirtyDaysAgo },
     }).sort({ timestamp: -1 });
 
-    // Calculate interest scores for products
     const productScores: Record<string, { score: number; lastSeen: Date }> = {};
 
-    // Calculate interest scores for categories
     const categoryScores: Record<string, { score: number; lastSeen: Date }> =
       {};
 
@@ -119,11 +116,9 @@ export async function updateUserInterests(userId: string): Promise<void> {
       const daysSinceActivity =
         (Date.now() - activity.timestamp.getTime()) / (1000 * 60 * 60 * 24);
 
-      // Apply decay factor based on recency
       const decayFactor = Math.exp(-0.05 * daysSinceActivity); // Exponential decay
       const interestScore = activity.weight * decayFactor;
 
-      // Update product scores
       if (activity.productId) {
         if (!productScores[activity.productId]) {
           productScores[activity.productId] = {
