@@ -8,7 +8,6 @@ import { resolvers } from "./schema/resolvers";
 import express from "express";
 import http from "http";
 import cors from "cors";
-import { Request, Response } from "express";
 import { createRateLimiter } from "./middleware/rateLimiter";
 import { authMiddleware } from "./middleware/auth";
 import { initRedis } from "./config/redis";
@@ -23,11 +22,6 @@ const app = express() as any;
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
-
-// Health check endpoint
-app.use("/health", (req: Request, res: Response) => {
-  res.send("OK");
-});
 
 const httpServer = http.createServer(app);
 
@@ -113,15 +107,8 @@ const startServer = async () => {
   }
 };
 
-startServer().catch((error) => {
+startServer().catch(async (error) => {
   logger.error(`Error starting server: ${error}`);
-  process.exit(1);
-});
-
-process.on("SIGTERM", async () => {
-  logger.info("SIGTERM signal received: closing HTTP server");
-  httpServer.close(() => {
-    logger.info("HTTP server closed");
-  });
   await producer.disconnect();
+  process.exit(1);
 });

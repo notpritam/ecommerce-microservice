@@ -20,7 +20,7 @@ COPY src/ ./src/
 
 RUN pnpm build
 
-EXPOSE 4000
+EXPOSE 3001
 
 # I am running the project here
 

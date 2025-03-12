@@ -2,11 +2,11 @@ import gql from "graphql-tag";
 
 export const activityTypeDefs = gql`
   enum ActivityType {
-    VIEW_PRODUCT
-    ADD_TO_CART
-    ADD_TO_WISHLIST
-    PURCHASE
-    SEARCH
+    view_product
+    add_to_cart
+    add_to_wishlist
+    purchase
+    search
   }
 
   input TrackActivityInput {

@@ -61,10 +61,10 @@ async function processUserActivity(data: any): Promise<void> {
   const { userId, productId, categoryId, activityType, timestamp, metadata } =
     data;
 
-  if (!userId || !activityType) {
-    logger.warn("Invalid activity data received", { data });
-    return;
-  }
+  // if (!userId || !activityType) {
+  //   logger.warn("Invalid activity data received", { data });
+  //   return;
+  // }
 
   try {
     const activityEnum = activityType as ActivityType;

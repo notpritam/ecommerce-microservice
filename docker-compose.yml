@@ -12,13 +12,18 @@ services:
       - USER_SERVICE_URL=http://user-service:3001
       - NOTIFICATION_SERVICE_URL=http://notification-service:3002
       - RECOMMENDATION_SERVICE_URL=http://recommendation-service:3003
+      - PRODUCT_SERVICE_URL=http://product-service:3004
+      - ORDER_SERVICE_URL=http://order-service:3005
+      - SCHEDULER_SERVICE_URL=http://scheduler-service:3006
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - KAFKA_BROKER=kafka:9092
       - JWT_SECRET=your_jwt_secret_key_change_in_production
     depends_on:
       - user-service
       - notification-service
       - recommendation-service
+      - kafka
       - redis
     networks:
       - app-network
@@ -50,7 +55,6 @@ services:
     networks:
       - app-network
     volumes:
-      - ./shared-types:/usr/src/app
       - ./user-service:/usr/src/app
       - /usr/src/app/node_modules
     restart: unless-stopped
@@ -77,7 +81,6 @@ services:
     networks:
       - app-network
     volumes:
-      - ./shared-types:/usr/src/app
       - ./notification-service:/usr/src/app
       - /usr/src/app/node_modules
     restart: unless-stopped
@@ -103,7 +106,6 @@ services:
     networks:
       - app-network
     volumes:
-      - ./shared-types:/usr/src/app
       - ./recommendation-service:/usr/src/app
       - /usr/src/app/node_modules
     restart: unless-stopped
@@ -128,7 +130,6 @@ services:
     networks:
       - app-network
     volumes:
-      - ./shared-types:/usr/src/app
       - ./product-service:/usr/src/app
       - /usr/src/app/node_modules
     restart: unless-stopped
@@ -154,7 +155,6 @@ services:
     networks:
       - app-network
     volumes:
-      - ./shared-types:/usr/src/app
       - ./order-service:/usr/src/app
       - /usr/src/app/node_modules
     restart: unless-stopped
@@ -180,7 +180,6 @@ services:
     networks:
       - app-network
     volumes:
-      - ./shared-types:/usr/src/app
       - ./scheduler-service:/usr/src/app
       - /usr/src/app/node_modules
     restart: unless-stopped

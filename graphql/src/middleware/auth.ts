@@ -80,6 +80,8 @@ export const authMiddleware = async (
 
       // Set the user in the request object
       req.user = decoded;
+
+      logger.info("Authenticated user", { user: decoded });
       req.token = token;
 
       // Extend session TTL
@@ -147,6 +149,8 @@ export const generateTokens = async (user: any) => {
       expiresIn: JWT_EXPIRATION,
     } as SignOptions
   );
+
+  logger.info("Generated access token for user", { userId: user.id, userInfo });
 
   // Generate refresh token
   const refreshToken = jwt.sign(

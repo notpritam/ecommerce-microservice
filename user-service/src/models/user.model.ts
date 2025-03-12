@@ -61,6 +61,19 @@ const UserSchema: Schema = new Schema(
   { timestamps: true }
 );
 
+UserSchema.virtual("id").get(function () {
+  return (this._id as mongoose.Types.ObjectId).toHexString();
+});
+
+UserSchema.set("toJSON", {
+  virtuals: true,
+  transform: function (doc, ret) {
+    delete ret._id;
+    delete ret.__v;
+    return ret;
+  },
+});
+
 const User = mongoose.model<IUser>("User", UserSchema);
 
 export default User;
