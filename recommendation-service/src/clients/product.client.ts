@@ -10,7 +10,7 @@ export class ProductServiceClient extends BaseServiceClient {
   }
 
   async getProducts(options: {
-    categoryIds?: string[];
+    categories?: string[];
     limit?: number;
   }): Promise<IApiResponse<any>> {
     return this.post<IApiResponse<any>>("/", {

@@ -1,4 +1,3 @@
-// import { producer } from "../../config/kafka";
 import { producer } from "../../config/kafka";
 import logger from "../../config/logger";
 import {
@@ -11,17 +10,16 @@ const ACTIVITY_TOPIC = "user.activity";
 export const activityResolvers = {
   Mutation: {
     trackActivity: async (_: any, { input }: any, context: any) => {
-      logger.info("Tracking activity", { input });
       if (!context.user) {
         throw new AuthenticationError(
           "You must be logged in to track activity"
         );
       }
 
-      const { productId, categoryId, searchQuery, activityType, metadata } =
+      const { productId, searchQuery, activityType, metadata, categories } =
         input;
+
       const userId = context.user.id;
-      logger.info("Tracking activity", { userId, activityType, context });
 
       if (activityType === "VIEW_PRODUCT" && !productId) {
         throw new UserInputError(
@@ -37,7 +35,7 @@ export const activityResolvers = {
         const activityPayload = {
           userId,
           productId,
-          categoryId,
+          categories,
           searchQuery,
           activityType,
           timestamp: Date.now(),

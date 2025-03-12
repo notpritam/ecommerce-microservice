@@ -11,7 +11,7 @@ interface RecommendedProduct {
   description: string;
   price: number;
   imageUrl: string;
-  categoryId: string;
+  categories: string[]; // Changed from categoryId to categories array
   score: number;
   reason: string;
 }
@@ -67,7 +67,7 @@ export class RecommendationGenerator {
       if (topCategoryInterests.length === 0) {
         return [];
       }
-      const categoryIds = topCategoryInterests.map(
+      const categories = topCategoryInterests.map(
         (interest) => interest.itemId
       );
       const categoryScores: Record<string, number> = {};
@@ -78,7 +78,7 @@ export class RecommendationGenerator {
       // TODO : Link with other service to send the data
 
       const response = await productServiceClient.getProducts({
-        categoryIds,
+        categories,
         limit: limit * 2,
       });
 
@@ -97,26 +97,48 @@ export class RecommendationGenerator {
         );
 
         if (!wasRecentlySent) {
-          // Calculate a recommendation score based on category interest
-          const categoryScore = categoryScores[product.categoryId] || 0;
-          const score = categoryScore * 0.8; // Weigh category interest as 80% of score
+          // Calculate a recommendation score based on category interests
+          // Find the highest score among the product's categories
+          let highestCategoryScore = 0;
+          let matchedCategory = "";
+
+          // Ensure product.categories is an array before processing
+          const productCategories = Array.isArray(product.categories)
+            ? product.categories
+            : product.categoryId
+            ? [product.categoryId]
+            : [];
+
+          for (const category of productCategories) {
+            const score = categoryScores[category] || 0;
+            if (score > highestCategoryScore) {
+              highestCategoryScore = score;
+              matchedCategory = category;
+            }
+          }
+
+          const score = highestCategoryScore * 0.8; // Weigh category interest as 80% of score
+
           filteredProducts.push({
             id: product.id,
             name: product.name,
             description: product.description,
             price: product.price,
             imageUrl: product.imageUrl,
-            categoryId: product.categoryId,
+            categories: productCategories, // Use the categories array
             score,
-            reason: "Based on your category interests",
+            reason: matchedCategory
+              ? `Based on your interest in ${matchedCategory}`
+              : "Based on your category interests",
           });
+
           if (filteredProducts.length >= limit) {
             break;
           }
         }
       }
 
-      return [];
+      return filteredProducts; // Fixed: Was returning empty array []
     } catch (error) {
       logger.error("Error getting interest-based recommendations", {
         userId,
@@ -125,6 +147,7 @@ export class RecommendationGenerator {
       return [];
     }
   }
+
   private async getRecentlyViewedRecommendations(
     userId: string,
     limit: number
@@ -163,13 +186,21 @@ export class RecommendationGenerator {
             (recentlyViewedIds.length - i) / recentlyViewedIds.length;
           // Base score is between 0.5-1.0 based on recency
           const score = 0.5 + recencyScore * 0.5;
+
+          // Ensure product.categories is an array
+          const productCategories = Array.isArray(product.categories)
+            ? product.categories
+            : product.categoryId
+            ? [product.categoryId]
+            : [];
+
           recommendations.push({
             id: product.id,
             name: product.name,
             description: product.description,
             price: product.price,
             imageUrl: product.imageUrl,
-            categoryId: product.categoryId,
+            categories: productCategories, // Use categories array instead of categoryId
             score,
             reason: "Recently viewed",
           });

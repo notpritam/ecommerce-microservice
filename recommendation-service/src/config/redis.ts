@@ -4,7 +4,7 @@ import logger from "./logger";
 
 interface ActivityData {
   productId?: string;
-  categoryId?: string;
+  categories?: string[];
   activityType: ActivityType;
   timestamp: number;
   weight: number;
@@ -68,7 +68,7 @@ class RedisService {
     const key = `user:${userId}:activity`;
     const activityData = JSON.stringify({
       productId: activity.productId,
-      categoryId: activity.categoryId,
+      categories: activity.categories,
       activityType: activity.activityType,
       weight: activity.weight,
       metadata: activity.metadata,

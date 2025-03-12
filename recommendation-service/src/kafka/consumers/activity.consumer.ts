@@ -58,13 +58,13 @@ export const stopActivityConsumer = async (): Promise<void> => {
 };
 
 async function processUserActivity(data: any): Promise<void> {
-  const { userId, productId, categoryId, activityType, timestamp, metadata } =
+  const { userId, productId, categories, activityType, timestamp, metadata } =
     data;
 
-  // if (!userId || !activityType) {
-  //   logger.warn("Invalid activity data received", { data });
-  //   return;
-  // }
+  if (!userId || !activityType) {
+    logger.warn("Invalid activity data received", { data });
+    return;
+  }
 
   try {
     const activityEnum = activityType as ActivityType;
@@ -73,7 +73,7 @@ async function processUserActivity(data: any): Promise<void> {
     const activity = new UserActivity({
       userId,
       productId,
-      categoryId,
+      categories,
       activityType: activityEnum,
       weight,
       timestamp: new Date(timestamp),
@@ -84,7 +84,7 @@ async function processUserActivity(data: any): Promise<void> {
 
     await redisService.storeUserActivity(userId, {
       productId,
-      categoryId,
+      categories,
       activityType: activityEnum,
       timestamp,
       weight,
@@ -108,7 +108,6 @@ export async function updateUserInterests(userId: string): Promise<void> {
     }).sort({ timestamp: -1 });
 
     const productScores: Record<string, { score: number; lastSeen: Date }> = {};
-
     const categoryScores: Record<string, { score: number; lastSeen: Date }> =
       {};
 
@@ -119,6 +118,7 @@ export async function updateUserInterests(userId: string): Promise<void> {
       const decayFactor = Math.exp(-0.05 * daysSinceActivity); // Exponential decay
       const interestScore = activity.weight * decayFactor;
 
+      // Update product scores
       if (activity.productId) {
         if (!productScores[activity.productId]) {
           productScores[activity.productId] = {
@@ -127,33 +127,33 @@ export async function updateUserInterests(userId: string): Promise<void> {
           };
         }
 
-        // @ts-ignore
+        //@ts-ignore
         productScores[activity.productId].score += interestScore;
 
-        // @ts-ignore
+        //@ts-ignore
         if (activity.timestamp > productScores[activity.productId].lastSeen) {
-          // Update last seen if more recent
-          // @ts-ignore
+          //@ts-ignore
           productScores[activity.productId].lastSeen = activity.timestamp;
         }
       }
 
-      // Update category scores
-      if (activity.categoryId) {
-        if (!categoryScores[activity.categoryId]) {
-          categoryScores[activity.categoryId] = {
-            score: 0,
-            lastSeen: activity.timestamp,
-          };
-        }
-        // @ts-ignore
-        categoryScores[activity.categoryId].score += interestScore;
+      // Update category scores - now handling categories as string[]
+      if (activity.categories && Array.isArray(activity.categories)) {
+        // Process each category in the array
+        for (const category of activity.categories) {
+          if (!categoryScores[category]) {
+            categoryScores[category] = {
+              score: 0,
+              lastSeen: activity.timestamp,
+            };
+          }
 
-        // Update last seen if more recent
-        // @ts-ignore
-        if (activity.timestamp > categoryScores[activity.categoryId].lastSeen) {
-          // @ts-ignore
-          categoryScores[activity.categoryId].lastSeen = activity.timestamp;
+          categoryScores[category].score += interestScore;
+
+          // Update last seen if more recent
+          if (activity.timestamp > categoryScores[category].lastSeen) {
+            categoryScores[category].lastSeen = activity.timestamp;
+          }
         }
       }
     }

@@ -19,7 +19,7 @@ export const activityWeights: Record<ActivityType, number> = {
 export interface IUserActivity extends Document {
   userId: string;
   productId?: string;
-  categoryId?: string;
+  categories?: string[];
   searchQuery?: string;
   activityType: ActivityType;
   weight: number;
@@ -38,9 +38,8 @@ const UserActivitySchema: Schema = new Schema({
     type: String,
     index: true,
   },
-  categoryId: {
-    type: String,
-    index: true,
+  categories: {
+    type: [String],
   },
   searchQuery: {
     type: String,
@@ -59,7 +58,6 @@ const UserActivitySchema: Schema = new Schema({
     default: Date.now,
     index: true,
   },
-  // TTL index to automatically expire documents after 90 days
   expireAt: {
     type: Date,
     default: () => new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
