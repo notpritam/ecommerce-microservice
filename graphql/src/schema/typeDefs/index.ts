@@ -2,6 +2,7 @@ import { gql } from "graphql-tag";
 import { userTypes } from "./user.typeDefs";
 import { notificationTypes } from "./notification.typeDefs";
 import { activityTypeDefs } from "./activity.typeDefs";
+import { orderTypeDefs } from "./order.typeDefs";
 
 const baseSchema = gql`
   type Query {
@@ -20,4 +21,5 @@ export const typeDefs = [
   userTypes,
   notificationTypes,
   activityTypeDefs,
+  orderTypeDefs,
 ];

@@ -2,6 +2,7 @@ import { GraphQLScalarType, Kind } from "graphql";
 import { userResolvers } from "./user.resolvers";
 import { notificationResolvers } from "./notification.resolvers";
 import { activityResolvers } from "./activity.resolvers";
+import { orderResolvers } from "./order.resolvers";
 
 const JSONScalar = new GraphQLScalarType({
   name: "JSON",
@@ -27,7 +28,6 @@ const JSONScalar = new GraphQLScalarType({
   },
 });
 
-// Merge all resolvers
 export const resolvers = {
   JSON: JSONScalar,
   Query: {
@@ -35,15 +35,13 @@ export const resolvers = {
     ...userResolvers.Query,
     ...notificationResolvers.Query,
     ...activityResolvers.Query,
+    ...orderResolvers.Query,
   },
   Mutation: {
     _: () => true,
     ...userResolvers.Mutation,
     ...notificationResolvers.Mutation,
     ...activityResolvers.Mutation,
+    ...orderResolvers.Mutation,
   },
-  //   Subscription: {
-  //     ...notificationResolvers.Subscription,
-  //   },
-  // ...userResolvers.Types,
 };
