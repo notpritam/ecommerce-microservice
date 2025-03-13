@@ -13,7 +13,7 @@ export const userTypes = gql`
   }
 
   type User {
-    _id: ID!
+    id: ID!
     name: String!
     email: String!
     preferences: UserPreferences!

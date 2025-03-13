@@ -11,26 +11,27 @@ interface RecommendedProduct {
   description: string;
   price: number;
   imageUrl: string;
-  categories: string[]; // Changed from categoryId to categories array
+  categories: string[];
   score: number;
   reason: string;
 }
 
-export class RecommendationGenerator {
+export class RecommendationService {
   async getPersonalizedRecommendations(
     userId: string,
     limit: number = 10
   ): Promise<RecommendedProduct[]> {
     try {
+      console.log("Generating personalized recommendations", { userId });
       const interestBasedRecommendations =
         await this.getInterestBasedRecommendations(userId, limit);
-      // Strategy 2: Get recently viewed but not purchased products
+
+      console.log("interestBasedRecommendations", interestBasedRecommendations);
+
       const recentlyViewedRecommendations =
         await this.getRecentlyViewedRecommendations(userId, limit);
       // Strategy 3: Get recommendations based on similar users (collaborative filtering)
-      // This would typically call a more complex recommender system
-      // For this example, we'll skip implementing this
-      // Combine all recommendations, removing duplicates
+
       const allRecommendations = [
         ...interestBasedRecommendations,
         ...recentlyViewedRecommendations,
@@ -219,3 +220,7 @@ export class RecommendationGenerator {
     }
   }
 }
+
+const recommendationService = new RecommendationService();
+
+export default recommendationService;

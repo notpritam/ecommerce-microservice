@@ -1,5 +1,4 @@
 import { BaseServiceClient } from "./base.client";
-import { INotification } from "../types/notification.types";
 import ENV from "../config/env";
 import { IApiResponse } from "../types";
 

@@ -30,7 +30,8 @@ const ENV: IEnv = {
   services: {
     orderServiceURL: "",
     productServiceURL:
-      process.env.PRODUCT_SERVICE_URL || "http://product-service:3002",
+      process.env.PRODUCT_SERVICE_URL ||
+      "http://product-service:3004/api/products",
     notificationServiceURL:
       "http://notification-service:3002/api/notifications",
     userServiceURL: process.env.USER_SERVICE_URL || "http://user-service:3001",
