@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 export interface IUser extends Document {
   name: string;
@@ -62,7 +62,7 @@ const UserSchema: Schema = new Schema(
 );
 
 UserSchema.virtual("id").get(function () {
-  return (this._id as mongoose.Types.ObjectId).toHexString();
+  return (this._id as Types.ObjectId).toHexString();
 });
 
 UserSchema.set("toJSON", {

@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 export interface IProduct extends Document {
   name: string;
@@ -53,6 +53,20 @@ const ProductSchema: Schema = new Schema(
 
 ProductSchema.index({ categories: 1 });
 ProductSchema.index({ tags: 1 });
+
+ProductSchema.virtual("id").get(function (this: IProduct) {
+  return (this._id as Types.ObjectId).toHexString();
+});
+
+ProductSchema.set("toJSON", {
+  virtuals: true,
+  versionKey: false,
+  transform: function (_, ret) {
+    delete ret._id;
+    delete ret.__v;
+    return ret;
+  },
+});
 
 const Product = mongoose.model<IProduct>("Product", ProductSchema);
 
