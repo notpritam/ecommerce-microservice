@@ -51,3 +51,4 @@ dist
 */.DS_Store
 */Thumbs.db
 */jspm_packages
+*/.pnpm-store

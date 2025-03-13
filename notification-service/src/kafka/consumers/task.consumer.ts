@@ -15,11 +15,19 @@ const demo = async (data: any) => {
   console.log("Demo task handler", data);
 };
 
+const handleOrderStatusChange = async (data: any) => {
+  const { orderId, userId, oldStatus, newStatus, updatedAt } = data;
+  logger.info(
+    `Order ${orderId} status changed from ${oldStatus} to ${newStatus}`
+  );
+  // Add logic to send notifications based on status change
+};
+
 // Here i am mapping the task name to the function that will handle the task
 
 const taskHandlers: Record<string, (data: any) => Promise<void>> = {
   "send-promotional-notifications": demo,
-  "process-order-status-updates": demo,
+  "process-order-status-updates": handleOrderStatusChange,
 };
 
 export const initTaskConsumer = async (): Promise<void> => {
@@ -37,6 +45,9 @@ export const initTaskConsumer = async (): Promise<void> => {
           if (!messageValue) return;
 
           const taskData = JSON.parse(messageValue);
+
+          console.log("Task data", taskData);
+
           logger.info(`Received scheduled task: ${taskData.taskName}`);
 
           const handler = taskHandlers[taskData.taskName];

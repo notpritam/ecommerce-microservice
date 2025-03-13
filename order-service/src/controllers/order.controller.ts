@@ -2,7 +2,7 @@ import logger from "../config/logger";
 import Order from "../models/order.model";
 import { Request, Response } from "express";
 
-export class OrderController {
+class OrderController {
   constructor() {}
 
   async createOrder(req: Request, res: Response): Promise<void> {
@@ -111,3 +111,7 @@ export class OrderController {
     }
   }
 }
+
+const orderController = new OrderController();
+
+export default orderController;
