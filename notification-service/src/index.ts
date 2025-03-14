@@ -2,6 +2,7 @@ import express from "express";
 import ENV from "./config/env";
 import notificationRouter from "./routes/notification.route";
 import connectDB from "./config/db";
+import { initTaskConsumer } from "./kafka/consumers/task.consumer";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use("/api/notifications", notificationRouter);
 const startServer = async () => {
   try {
     await connectDB();
+    // await initTaskConsumer();
     app.listen(PORT, () => {
       console.log(`Notification service is running on the port ${PORT}`);
     });

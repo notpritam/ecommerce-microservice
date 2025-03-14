@@ -4,6 +4,7 @@ import { UserInterest } from "../models/userInterest.model";
 import logger from "../config/logger";
 import { ProductServiceClient } from "../clients/product.client";
 import { redisService } from "../config/redis";
+import Recommendation from "../models/recommendation.model";
 
 export interface IApiResponse<T> {
   data: T;
@@ -112,7 +113,21 @@ class RecommendationController {
         10
       );
 
-      console.log("userRecommendations", recommendations);
+      for (const recommendation of recommendations) {
+        await Recommendation.create({
+          userId,
+          products: [
+            {
+              productId: recommendation.id,
+              score: recommendation.score,
+              reason: recommendation.reason,
+            },
+          ],
+          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+          isNotified: false,
+        });
+      }
+
       res.status(200).json({
         data: recommendations,
         error: "",

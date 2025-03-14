@@ -6,6 +6,7 @@ import kafkaProducer from "../kafka/producers/producer";
 export class NotificationController {
   public async createNotification(req: Request, res: Response): Promise<any> {
     try {
+      console.log("req.body", req.body);
       const { userId, type, content, expiresAt } = req.body;
 
       console.log("userId", userId);
@@ -18,7 +19,7 @@ export class NotificationController {
         userId,
         type,
         content,
-        expiresAt,
+        expiresAt: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
         read: false,
         sentAt: new Date(),
       });

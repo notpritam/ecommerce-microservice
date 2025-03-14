@@ -34,7 +34,7 @@ export const initTaskConsumer = async (): Promise<void> => {
   try {
     await consumer.connect();
     await consumer.subscribe({
-      topic: "notification.tasks",
+      topics: ["notification.tasks", "order.status"],
       fromBeginning: false,
     });
 

@@ -8,7 +8,7 @@ export const notificationTypes = gql`
   }
 
   type Notification {
-    _id: ID!
+    id: ID!
     userId: ID!
     type: NotificationType!
     content: JSON!

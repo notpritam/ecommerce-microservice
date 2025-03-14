@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 export type OrderStatus =
   | "pending"
@@ -93,6 +93,19 @@ const OrderSchema: Schema = new Schema(
 
 OrderSchema.index({ userId: 1, createdAt: -1 });
 OrderSchema.index({ status: 1 });
+
+OrderSchema.virtual("id").get(function (this: IOrder) {
+  return (this._id as Types.ObjectId).toHexString();
+});
+
+OrderSchema.set("toJSON", {
+  virtuals: true,
+  transform: function (doc, ret) {
+    delete ret._id;
+    delete ret.__v;
+    return ret;
+  },
+});
 
 const Order = mongoose.model<IOrder>("Order", OrderSchema);
 
