@@ -20,7 +20,7 @@ app.use("/api/order", orderRouter);
 const startServer = async () => {
   try {
     await connectDB();
-    await connectProducer();
+    // await connectProducer();
     app.listen(ENV.port, () => {
       logger.info("Order Service Server running on port " + ENV.port);
     });
