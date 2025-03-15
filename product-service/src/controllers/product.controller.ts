@@ -9,6 +9,8 @@ export class ProductController {
       console.log("Fetching products");
       const products = await Product.find();
 
+      logger.info("Products retrieved successfully", products[0]);
+
       res.status(200).json({
         success: true,
         data: products,

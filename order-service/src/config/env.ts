@@ -46,7 +46,7 @@ const ENV: IEnv = {
   refresh_token_expiration: parseInt(
     process.env.REFRESH_TOKEN_EXPIRATION || "2592000"
   ),
-  mongodb: process.env.MONGO_URI || "mongodb://mongo-product:27017/product-db",
+  mongodb: process.env.MONGO_URI || "mongodb://mongo-order:27017/order-db",
   port: parseInt(process.env.PORT || "3005"),
   kafka_brokers: process.env.KAFKA_BROKERS || "localhost:9092",
   kafka_client_id: process.env.KAFKA_CLIENT_ID || "notification-service",
