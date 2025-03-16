@@ -25,6 +25,7 @@ const NotificationSchema: Schema = new Schema(
     },
     recommendationId: {
       type: String,
+      default: null,
     },
     content: {
       type: Schema.Types.Mixed,

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Notification from "../models/notification.model";
 import logger from "../config/logger";
-import kafkaProducer from "../kafka/producers/producer";
+import { producer } from "../config/kafka";
 
 export class NotificationController {
   public async createNotification(req: Request, res: Response): Promise<any> {
@@ -21,39 +21,36 @@ export class NotificationController {
         content,
         expiresAt: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
         read: false,
-        sentAt: new Date(),
       });
 
       await notification.save();
 
       // I am now pushing the notification to the Kafka topic so other service can consume it
 
-      // await kafkaProducer.send({
-      //   topic: "notification",
-      //   messages: [
-      //     {
-      //       key: userId,
-      //       value: JSON.stringify({
-      //         id: notification._id,
-      //         userId: notification.userId,
-      //         type: notification.type,
-      //         content: notification.content,
-      //         sentAt: notification.sentAt,
-      //       }),
-      //     },
-      //   ],
-      // });
+      await producer.send({
+        topic: "notification.tasks",
+        messages: [
+          {
+            value: JSON.stringify({
+              taskName: "send-notification",
+              data: {
+                notificationId: notification._id,
+              },
+            }),
+          },
+        ],
+      });
 
       // TODO : now i will need to store this notification in the redis database to access it faster
 
-      return res.status(201).json({
+      res.status(201).json({
         success: true,
         data: notification,
         message: "Notification created successfully",
       });
     } catch (error: any) {
       logger.error("Error creating notification", error.message);
-      return res
+      res
         .status(500)
         .json({ message: "Failed to create notification", success: false });
     }

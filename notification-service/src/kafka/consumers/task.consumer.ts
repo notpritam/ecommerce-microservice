@@ -1,6 +1,9 @@
 import { Kafka, Consumer } from "kafkajs";
 import logger from "../../config/logger";
 import ENV from "../../config/env";
+import notificationService, {
+  IOrderUpdate,
+} from "../../services/notification.service";
 
 const kafka = new Kafka({
   clientId: ENV.kafka_client_id,
@@ -15,25 +18,19 @@ const demo = async (data: any) => {
   console.log("Demo task handler", data);
 };
 
-const handleOrderStatusChange = async (data: any) => {
-  const { orderId, userId, oldStatus, newStatus, updatedAt } = data;
-  logger.info(
-    `Order ${orderId} status changed from ${oldStatus} to ${newStatus}`
-  );
-  // TODO : Adding logic to send notifications based on status change
-};
-
 // Here i am mapping the task name to the function that will handle the task
 
 const taskHandlers: Record<string, (data: any) => Promise<void>> = {
   "send-promotional-notifications": demo,
-  "process-order-status-updates": handleOrderStatusChange,
+  "process-order-status-updates": notificationService.handleOrderStatusChange,
   "send-recommendation-notification": demo,
+  "send-notification": notificationService.sendNotification,
 };
 
 export const initTaskConsumer = async (): Promise<void> => {
   try {
     await consumer.connect();
+    logger.info("Connected to Kafka consumer");
     await consumer.subscribe({
       topic: "notification.tasks",
       fromBeginning: false,

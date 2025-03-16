@@ -38,11 +38,16 @@ export const notificationTypes = gql`
     hasNexPage: Boolean!
   }
 
+  type NotificationResponse {
+    success: Boolean!
+    message: String
+  }
+
   extend type Query {
     getUserNotifications(userID: ID!, limit: Int, offset: Int): [Notification!]!
     getUnreadNotificationCount(userID: ID!): Int!
-    markAsRead(userID: ID!): Boolean!
-    markNotificationAsRead(notificationID: ID!): Boolean!
+    markAsRead(userID: ID!): NotificationResponse!
+    markNotificationAsRead(notificationID: ID!): NotificationResponse!
   }
 
   extend type Mutation {

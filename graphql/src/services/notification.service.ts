@@ -1,6 +1,5 @@
 import { NotificationServiceClient } from "../clients/notification.client";
 import logger from "../config/logger";
-import { NotFoundError } from "../middleware/errorHandler";
 import { IApiResponse } from "../types";
 import { INotification } from "../types/notification.types";
 
