@@ -1,3 +1,4 @@
+import orderService from "../../services/order.service";
 import { IOrder, OrderStatus } from "../../types/orders.types";
 
 interface OrderItemInput {
@@ -36,35 +37,7 @@ export const orderResolvers = {
       _: any,
       { id }: { id: string }
     ): Promise<IOrder | null> => {
-      return {
-        id: "1",
-        userId: "1",
-        orderItems: [
-          {
-            productId: "1",
-            quantity: 1,
-            price: 100,
-          },
-        ],
-        totalAmount: 100,
-        status: "pending",
-        statusHistory: [
-          {
-            status: "pending",
-            timestamp: new Date(),
-            note: "Order created",
-          },
-        ],
-        shippingAddress: {
-          street: "123 Main St",
-          city: "Springfield",
-          state: "IL",
-          zipCode: "62701",
-          country: "USA",
-        },
-        paymentMethod: "credit card",
-        createdAt: new Date(),
-      };
+      return orderService.getOrderById(id);
     },
     getOrdersByUser: async (
       _: any,
@@ -135,49 +108,7 @@ export const orderResolvers = {
       _: any,
       { id, status, note }: { id: string; status: OrderStatus; note?: string }
     ): Promise<IOrder | null> => {
-      //   const order = await Order.findById(id);
-
-      //   if (!order) {
-      //     throw new Error(`Order with id ${id} not found`);
-      //   }
-
-      // Add new status to history
-      const statusUpdate = {
-        status,
-        timestamp: new Date(),
-        note: note || `Status updated to ${status}`,
-      };
-
-      // Update the order
-      return {
-        id: "1",
-        userId: "1",
-        orderItems: [
-          {
-            productId: "1",
-            quantity: 1,
-            price: 100,
-          },
-        ],
-        totalAmount: 100,
-        status: "pending",
-        statusHistory: [
-          {
-            status: "pending",
-            timestamp: new Date(),
-            note: "Order created",
-          },
-        ],
-        shippingAddress: {
-          street: "123 Main St",
-          city: "Springfield",
-          state: "IL",
-          zipCode: "62701",
-          country: "USA",
-        },
-        paymentMethod: "credit card",
-        createdAt: new Date(),
-      };
+      return orderService.updateOrderStatus(id, status, note);
     },
 
     cancelOrder: async (

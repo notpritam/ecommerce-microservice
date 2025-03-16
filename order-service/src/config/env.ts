@@ -48,7 +48,7 @@ const ENV: IEnv = {
   ),
   mongodb: process.env.MONGO_URI || "mongodb://mongo-order:27017/order-db",
   port: parseInt(process.env.PORT || "3005"),
-  kafka_brokers: process.env.KAFKA_BROKERS || "localhost:9092",
+  kafka_brokers: process.env.KAFKA_BROKERS || "kafka:9092",
   kafka_client_id: process.env.KAFKA_CLIENT_ID || "notification-service",
   kafka_group_id:
     process.env.KAFKA_GROUP_ID || "notification-service-tasks-group",

@@ -28,7 +28,7 @@ interface IEnv {
 
 const ENV: IEnv = {
   services: {
-    orderServiceURL: "",
+    orderServiceURL: "http://order-service:3005/api/order",
     productServiceURL: "",
     notificationServiceURL:
       "http://notification-service:3002/api/notifications",

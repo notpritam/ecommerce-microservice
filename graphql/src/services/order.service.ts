@@ -3,6 +3,7 @@ import logger from "../config/logger";
 import { generateTokens } from "../middleware/auth";
 import { NotFoundError } from "../middleware/errorHandler";
 import { IAuthResponse } from "../types";
+import { IOrder } from "../types/orders.types";
 import { IUser } from "../types/user.types";
 
 class OrderService {
@@ -10,6 +11,62 @@ class OrderService {
 
   constructor() {
     this.orderClient = new OrderServiceClient();
+  }
+
+  async getOrderById(orderId: string): Promise<IOrder> {
+    try {
+      logger.info("Get order by ID:", orderId);
+
+      const response = await this.orderClient.getOrderById(orderId);
+
+      if (!response.success) {
+        throw new NotFoundError("Order not found");
+      }
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateOrder(orderId: string, order: IOrder): Promise<IOrder> {
+    try {
+      logger.info("Update order:", orderId);
+
+      const response = await this.orderClient.updateOrder(orderId, order);
+
+      if (!response.success) {
+        throw new Error("Failed to update order");
+      }
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateOrderStatus(
+    orderId: string,
+    status: string,
+    note?: string
+  ): Promise<IOrder> {
+    try {
+      logger.info("Update order status:", orderId);
+
+      const response = await this.orderClient.updateOrderStatus(
+        orderId,
+        status,
+        note
+      );
+
+      if (!response.success) {
+        throw new Error("Failed to update order status");
+      }
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getUserById(userId: string): Promise<IUser> {

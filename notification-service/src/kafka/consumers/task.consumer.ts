@@ -20,7 +20,7 @@ const handleOrderStatusChange = async (data: any) => {
   logger.info(
     `Order ${orderId} status changed from ${oldStatus} to ${newStatus}`
   );
-  // Add logic to send notifications based on status change
+  // TODO : Adding logic to send notifications based on status change
 };
 
 // Here i am mapping the task name to the function that will handle the task
@@ -28,13 +28,18 @@ const handleOrderStatusChange = async (data: any) => {
 const taskHandlers: Record<string, (data: any) => Promise<void>> = {
   "send-promotional-notifications": demo,
   "process-order-status-updates": handleOrderStatusChange,
+  "send-recommendation-notification": demo,
 };
 
 export const initTaskConsumer = async (): Promise<void> => {
   try {
     await consumer.connect();
     await consumer.subscribe({
-      topics: ["notification.tasks", "order.status"],
+      topic: "notification.tasks",
+      fromBeginning: false,
+    });
+    await consumer.subscribe({
+      topic: "order.events",
       fromBeginning: false,
     });
 

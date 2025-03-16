@@ -1,9 +1,10 @@
 import { Kafka } from "kafkajs";
 import logger from "./logger";
+import ENV from "./env";
 
 const kafka = new Kafka({
   clientId: "order-service",
-  brokers: ["kafka:9092"],
+  brokers: [ENV.kafka_brokers],
 });
 
 export const producer = kafka.producer();

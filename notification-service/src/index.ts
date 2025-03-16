@@ -16,7 +16,7 @@ app.use("/api/notifications", notificationRouter);
 const startServer = async () => {
   try {
     await connectDB();
-    // await initTaskConsumer();
+    await initTaskConsumer();
     app.listen(PORT, () => {
       console.log(`Notification service is running on the port ${PORT}`);
     });

@@ -13,9 +13,37 @@ export class OrderServiceClient extends BaseServiceClient {
 
   async getOrderById(orderId: string): Promise<IApiResponse<IOrder>> {
     try {
-      return this.get<IApiResponse<IOrder>>(`/api/orders/${orderId}`);
+      return this.get<IApiResponse<IOrder>>(`/${orderId}`);
     } catch (error) {
       logger.error(`Error in getOrderById for ID ${orderId}:`, error);
+      throw error;
+    }
+  }
+
+  async updateOrderStatus(
+    orderId: string,
+    status: string,
+    note?: string
+  ): Promise<IApiResponse<IOrder>> {
+    try {
+      return this.put<IApiResponse<IOrder>>(`/${orderId}/status`, {
+        status,
+        note,
+      });
+    } catch (error) {
+      logger.error(`Error in updateOrderStatus for ID ${orderId}:`, error);
+      throw error;
+    }
+  }
+
+  async updateOrder(
+    orderId: string,
+    order: IOrder
+  ): Promise<IApiResponse<IOrder>> {
+    try {
+      return this.put<IApiResponse<IOrder>>(`/${orderId}`, order);
+    } catch (error) {
+      logger.error(`Error in updateOrder for ID ${orderId}:`, error);
       throw error;
     }
   }

@@ -11,5 +11,6 @@ router.get("/:id", orderController.getOrder);
 router.post("/", orderController.createOrder);
 router.put("/:id", orderController.updateOrder);
 router.delete("/:id", orderController.deleteOrder);
+router.put("/:id/status", orderController.updateOrderStatus);
 
 export default router;
