@@ -7,12 +7,24 @@ import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import cron from "node-cron";
-import Scheduler from "./models/scheduler.model";
+import Scheduler, { ServiceType } from "./models/scheduler.model";
 import connectDB from "./config/db";
 import { Request, Response } from "express";
 import { createDefaultTasks } from "./utils/helper";
 import ENV from "./config/env";
 import logger from "./config/logger";
+
+interface Task {
+  taskName: string;
+  serviceType: ServiceType;
+  cronExpression: string;
+  enabled: boolean;
+  data: {
+    maxRecommendations: number;
+    includePriceDrops: boolean;
+  };
+  id: string;
+}
 
 dotenv.config();
 
@@ -143,9 +155,10 @@ const initializeScheduler = async () => {
     }
 
     const tasks = await Scheduler.find({ enabled: true });
-    console.log(`Found ${tasks.length} enabled tasks to schedule`);
+    logger.info(`Found ${tasks.length} enabled tasks to schedule`);
 
     tasks.forEach((task) => {
+      console.log("Task details", JSON.stringify(task, null, 2));
       scheduleTask(task);
     });
   } catch (error) {
@@ -186,7 +199,7 @@ const scheduleTask = (task: any) => {
   }
 };
 
-const sendKafkaMessage = async (task: any) => {
+const sendKafkaMessage = async (task: Task) => {
   let topic;
 
   switch (task.serviceType) {
@@ -242,7 +255,6 @@ const sendKafkaMessage = async (task: any) => {
 const shutdown = async () => {
   console.log("Shutting down scheduler service...");
 
-  // Stop all scheduled tasks
   for (const [_, task] of scheduledTasks) {
     task.stop();
   }

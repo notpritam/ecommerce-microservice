@@ -3,6 +3,7 @@ import { userResolvers } from "./user.resolvers";
 import { notificationResolvers } from "./notification.resolvers";
 import { activityResolvers } from "./activity.resolvers";
 import { orderResolvers } from "./order.resolvers";
+import { schedulerResolvers } from "./scheduler.resolvers";
 
 const JSONScalar = new GraphQLScalarType({
   name: "JSON",
@@ -36,6 +37,7 @@ export const resolvers = {
     ...notificationResolvers.Query,
     ...activityResolvers.Query,
     ...orderResolvers.Query,
+    ...schedulerResolvers.Query,
   },
   Mutation: {
     _: () => true,
@@ -43,5 +45,6 @@ export const resolvers = {
     ...notificationResolvers.Mutation,
     ...activityResolvers.Mutation,
     ...orderResolvers.Mutation,
+    ...schedulerResolvers.Mutation,
   },
 };

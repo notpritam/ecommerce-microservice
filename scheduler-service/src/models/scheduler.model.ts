@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 export type ServiceType = "user" | "notification" | "recommendation" | "order";
 
@@ -46,6 +46,19 @@ const SchedulerSchema: Schema = new Schema(
   },
   { timestamps: true }
 );
+
+SchedulerSchema.virtual("id").get(function (this: IScheduler) {
+  return (this._id as Types.ObjectId).toHexString();
+});
+
+SchedulerSchema.set("toJSON", {
+  virtuals: true,
+  transform: function (doc, ret) {
+    delete ret._id;
+    delete ret.__v;
+    return ret;
+  },
+});
 
 const Scheduler = mongoose.model<IScheduler>("Scheduler", SchedulerSchema);
 
