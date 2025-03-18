@@ -220,11 +220,13 @@ const sendKafkaMessage = async (task: Task) => {
   }
 
   const message = {
-    taskId: task.id,
     taskName: task.taskName,
-    serviceType: task.serviceType,
-    timestamp: new Date().toISOString(),
-    data: task.data || {},
+    data: {
+      ...task.data,
+      taskId: task.id,
+      serviceType: task.serviceType,
+      timestamp: new Date().toISOString(),
+    },
   };
 
   await producer.send({
