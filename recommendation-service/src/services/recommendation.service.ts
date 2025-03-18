@@ -1,4 +1,5 @@
 import { ProductServiceClient } from "../clients/product.client";
+import { UserServiceClient } from "../clients/user.client";
 import logger from "../config/logger";
 import { redisService } from "../config/redis";
 import { producer } from "../kafka/consumer";
@@ -6,6 +7,7 @@ import Recommendation from "../models/recommendation.model";
 import { UserInterest } from "../models/userInterest.model";
 
 const productServiceClient = new ProductServiceClient();
+const userServiceClient = new UserServiceClient();
 
 interface RecommendedProduct {
   id: string;
@@ -32,18 +34,16 @@ export class RecommendationService {
 
       const recentlyViewedRecommendations =
         await this.getRecentlyViewedRecommendations(userId, limit);
-      // Strategy 3: Get recommendations based on similar users (collaborative filtering)
 
       const allRecommendations = [
         ...interestBasedRecommendations,
         ...recentlyViewedRecommendations,
       ];
-      // Remove duplicates by product ID
       const uniqueRecommendations = Array.from(
         new Map(allRecommendations.map((item) => [item.id, item])).values()
       );
-      // Sort by score (highest first)
       uniqueRecommendations.sort((a, b) => b.score - a.score);
+
       // Return top N recommendations
       return uniqueRecommendations.slice(0, limit);
     } catch (error) {
@@ -55,7 +55,6 @@ export class RecommendationService {
     }
   }
 
-  // Generating User Recommendations Based on their Interests
   private async getInterestBasedRecommendations(
     userId: string,
     limit: number
@@ -239,10 +238,11 @@ export class RecommendationService {
     try {
       logger.info("Processing scheduled recommendation task", { taskData });
 
-      // 1. Get all users who have opted in to receive recommendations
-      const userIds = await this.getUsersEligibleForRecommendations();
+      const response =
+        await userServiceClient.getEligibleUserForRecommendations();
+      const userIds = response.data;
 
-      if (!userIds.length) {
+      if (!response.success || !userIds.length) {
         logger.info("No eligible users found for recommendations");
         return {
           success: true,

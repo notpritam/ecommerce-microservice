@@ -2,6 +2,7 @@ import { BaseServiceClient } from "./base.client";
 import ENV from "../config/env";
 import { IUser } from "../types/user.types";
 import logger from "../config/logger";
+import { IApiResponse } from "../types";
 
 export class UserServiceClient extends BaseServiceClient {
   constructor() {
@@ -44,6 +45,15 @@ export class UserServiceClient extends BaseServiceClient {
       });
     } catch (error) {
       logger.error("Error in loginUser:", error);
+      throw error;
+    }
+  }
+
+  async getEligibleUserForRecommendations(): Promise<IApiResponse<string[]>> {
+    try {
+      return this.get<IApiResponse<string[]>>("/api/users/eligible");
+    } catch (error) {
+      logger.error("Error in getting users", error);
       throw error;
     }
   }
