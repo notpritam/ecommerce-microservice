@@ -12,6 +12,7 @@ import connectDB from "./config/db";
 import { Request, Response } from "express";
 import { createDefaultTasks } from "./utils/helper";
 import ENV from "./config/env";
+import logger from "./config/logger";
 
 dotenv.config();
 
@@ -39,16 +40,15 @@ const setupServer = async () => {
     await connectDB();
 
     await producer.connect();
-    console.log("Connected to Kafka");
 
     const server = createServer(app);
     server.listen(port, () => {
-      console.log(`Scheduler service listening on port ${port}`);
+      logger.info(`Scheduler service listening on port ${port}`);
 
       initializeScheduler();
     });
   } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
+    logger.error("Error connecting to MongoDB:", error);
     process.exit(1);
   }
 };

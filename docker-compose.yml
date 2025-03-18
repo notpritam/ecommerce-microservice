@@ -159,18 +159,6 @@ services:
       - /usr/src/app/node_modules
     restart: unless-stopped
 
-  # monitoring services
-
-  prometheus:
-    image: prom/prometheus:latest
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./monitoring/prometheus:/etc/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    networks:
-      - app-network
 
   # Scheduler Service
 
@@ -184,7 +172,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - MONGO_URI=mongodb://mongo-scheduler:27017/scheduler-db
-      - JWT_SECRET=your_jwt_secret_key_change_in_productionx
+      - JWT_SECRET=your_jwt_secret_key_change_in_production
     depends_on:
       - redis
       - kafka
