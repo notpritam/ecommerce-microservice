@@ -1,13 +1,13 @@
 import { Kafka } from "kafkajs";
-import logger from "../../config/logger";
+import logger from "../config/logger";
 import {
   ActivityType,
   activityWeights,
   UserActivity,
-} from "../../models/userActivity.model";
-import { redisService } from "../../config/redis";
-import { UserInterest } from "../../models/userInterest.model";
-import ENV from "../../config/env";
+} from "../models/userActivity.model";
+import { redisService } from "../config/redis";
+import { UserInterest } from "../models/userInterest.model";
+import ENV from "../config/env";
 
 const kafka = new Kafka({
   clientId: ENV.kafka_client_id,
@@ -15,25 +15,36 @@ const kafka = new Kafka({
 });
 
 const consumer = kafka.consumer({ groupId: "recommendation-service-activity" });
+const producer = kafka.producer();
+producer.connect();
 
 const ACTIVITY_TOPIC = "user.activity";
+const RECOMMENDATION = "recommendation.process";
 
-export const startActivityConsumer = async (): Promise<void> => {
+export const startConsumer = async (): Promise<void> => {
   try {
     await consumer.connect();
     await consumer.subscribe({ topic: ACTIVITY_TOPIC, fromBeginning: false });
+    await consumer.subscribe({
+      topic: RECOMMENDATION,
+      fromBeginning: false,
+    });
 
-    logger.info("Activity consumer connected and subscribed to topics");
+    logger.info(" Recommendation consumer connected and subscribed to topics");
 
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
         try {
           if (!message.value) return;
 
-          const activityData = JSON.parse(message.value.toString());
-          logger.info("Received activity message", { activityData });
+          const data = JSON.parse(message.value.toString());
 
-          await processUserActivity(activityData);
+          if (topic == ACTIVITY_TOPIC) {
+            logger.info("Received activity message", { data });
+            await processUserActivity(data);
+          } else if (topic == RECOMMENDATION) {
+            logger.info("Received recommendation", data);
+          }
         } catch (error) {
           logger.error("Error processing activity message", {
             topic,
@@ -45,11 +56,11 @@ export const startActivityConsumer = async (): Promise<void> => {
     });
   } catch (error) {
     logger.error("Error starting activity consumer", error);
-    setTimeout(startActivityConsumer, 5000);
+    setTimeout(startConsumer, 5000);
   }
 };
 
-export const stopActivityConsumer = async (): Promise<void> => {
+export const stopConsumer = async (): Promise<void> => {
   try {
     await consumer.disconnect();
   } catch (error) {
@@ -230,3 +241,5 @@ export async function updateUserInterests(userId: string): Promise<void> {
     logger.error("Error updating user interests", { userId, error });
   }
 }
+
+export { producer };

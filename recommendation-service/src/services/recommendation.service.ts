@@ -1,6 +1,8 @@
 import { ProductServiceClient } from "../clients/product.client";
 import logger from "../config/logger";
 import { redisService } from "../config/redis";
+import { producer } from "../kafka/consumer";
+import Recommendation from "../models/recommendation.model";
 import { UserInterest } from "../models/userInterest.model";
 
 const productServiceClient = new ProductServiceClient();
@@ -218,6 +220,191 @@ export class RecommendationService {
       });
       return [];
     }
+  }
+
+  async processRecommendationTask(taskData: {
+    maxRecommendations: number;
+    includePriceDrops: boolean;
+    taskId: string;
+  }): Promise<{
+    success: boolean;
+    processedUsers: number;
+    totalRecommendations: number;
+    errors: string[];
+  }> {
+    const errors: string[] = [];
+    let processedUsers = 0;
+    let totalRecommendations = 0;
+
+    try {
+      logger.info("Processing scheduled recommendation task", { taskData });
+
+      // 1. Get all users who have opted in to receive recommendations
+      const userIds = await this.getUsersEligibleForRecommendations();
+
+      if (!userIds.length) {
+        logger.info("No eligible users found for recommendations");
+        return {
+          success: true,
+          processedUsers: 0,
+          totalRecommendations: 0,
+          errors: [],
+        };
+      }
+
+      logger.info(`Found ${userIds.length} users eligible for recommendations`);
+
+      for (const userId of userIds) {
+        try {
+          // Generate recommendations for this user
+          const recommendations = await this.getPersonalizedRecommendations(
+            userId,
+            taskData.maxRecommendations
+          );
+
+          if (recommendations.length > 0) {
+            // Store recommendations in database
+            const storedRecommendations = await this.storeRecommendations(
+              userId,
+              recommendations,
+              taskData.taskId
+            );
+
+            // Mark these recommendations as sent to avoid duplicates in future
+            for (const rec of recommendations) {
+              // await redisService.markRecommendationSent(userId, rec.id);
+            }
+
+            // Send to notification queue
+            await this.sendToNotificationQueue(
+              producer,
+              userId,
+              storedRecommendations
+            );
+
+            totalRecommendations += recommendations.length;
+            processedUsers++;
+            logger.info(
+              `Generated ${recommendations.length} recommendations for user ${userId}`
+            );
+          } else {
+            logger.info(`No recommendations generated for user ${userId}`);
+          }
+        } catch (error: any) {
+          const errorMessage = `Error processing recommendations for user ${userId}: ${error.message}`;
+          logger.error(errorMessage, { error });
+          errors.push(errorMessage);
+        }
+      }
+
+      await producer.disconnect();
+
+      return {
+        success: true,
+        processedUsers,
+        totalRecommendations,
+        errors,
+      };
+    } catch (error: any) {
+      const errorMessage = `Failed to process recommendation task: ${error.message}`;
+      logger.error(errorMessage, { error, taskData });
+      errors.push(errorMessage);
+
+      return {
+        success: false,
+        processedUsers,
+        totalRecommendations,
+        errors,
+      };
+    }
+  }
+
+  private async getUsersEligibleForRecommendations(): Promise<string[]> {
+    try {
+      const response = await fetch(
+        `${process.env.USER_SERVICE_URL}/api/users/eligible-for-recommendations`
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch eligible users: ${response.statusText}`
+        );
+      }
+
+      const data: any = await response.json();
+      return data.userIds || [];
+    } catch (error) {
+      logger.error("Error fetching eligible users", { error });
+      return [];
+    }
+  }
+
+  private async storeRecommendations(
+    userId: string,
+    recommendations: RecommendedProduct[],
+    taskId: string
+  ): Promise<any[]> {
+    const storedRecommendations = [];
+
+    for (const rec of recommendations) {
+      const recommendation = new Recommendation({
+        userId,
+        productId: rec.id,
+        score: rec.score,
+        reason: rec.reason,
+        taskId,
+        createdAt: new Date(),
+        productDetails: {
+          name: rec.name,
+          price: rec.price,
+          imageUrl: rec.imageUrl,
+          categories: rec.categories,
+        },
+      });
+
+      const saved = await recommendation.save();
+      storedRecommendations.push(saved);
+    }
+
+    return storedRecommendations;
+  }
+
+  private async sendToNotificationQueue(
+    producer: any,
+    userId: string,
+    recommendations: any[]
+  ): Promise<void> {
+    const notificationPayload = {
+      type: "recommendation",
+      userId,
+      timestamp: new Date().toISOString(),
+      content: {
+        title: "Products Recommended For You",
+        body: `We found ${recommendations.length} products you might like!`,
+        recommendations: recommendations.map((rec) => ({
+          recommendationId: rec._id.toString(),
+          productId: rec.productId,
+          productName: rec.productDetails.name,
+          reason: rec.reason,
+          imageUrl: rec.productDetails.imageUrl,
+          price: rec.productDetails.price,
+        })),
+      },
+    };
+
+    await producer.send({
+      topic: "notification.created",
+      messages: [
+        {
+          key: `recommendation-${userId}`,
+          value: JSON.stringify(notificationPayload),
+        },
+      ],
+    });
+
+    logger.info(
+      `Sent ${recommendations.length} recommendations to notification queue for user ${userId}`
+    );
   }
 }
 

@@ -1,9 +1,7 @@
 import { Kafka, Consumer } from "kafkajs";
 import logger from "../../config/logger";
 import ENV from "../../config/env";
-import notificationService, {
-  IOrderUpdate,
-} from "../../services/notification.service";
+import notificationService from "../../services/notification.service";
 
 const kafka = new Kafka({
   clientId: ENV.kafka_client_id,

@@ -1,9 +1,9 @@
 import express from "express";
-import { startActivityConsumer } from "./kafka/consumers/activity.consumer";
 import ENV from "./config/env";
 import connectDB from "./config/db";
 import logger from "./config/logger";
 import recommendationRouter from "./routes/recommendation.routes";
+import { startConsumer } from "./kafka/consumer";
 
 const app = express();
 
@@ -15,7 +15,7 @@ app.use("/recommendation", recommendationRouter);
 const startServer = async () => {
   try {
     await connectDB();
-    await startActivityConsumer();
+    await startConsumer();
     app.listen(ENV.port, () => {
       logger.info("Server running on port " + ENV.port);
     });

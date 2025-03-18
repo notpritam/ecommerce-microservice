@@ -161,6 +161,30 @@ const initializeScheduler = async () => {
       console.log("Task details", JSON.stringify(task, null, 2));
       scheduleTask(task);
     });
+
+    // ToRemove : Test Task so we can test if it is working or not
+
+    scheduleTask({
+      taskName: "test-task-30sec",
+      serviceType: "notification",
+      cronExpression: "*/30 * * * * *",
+      enabled: true,
+      data: {
+        isTest: true,
+        message: "This is a test notification",
+      },
+    });
+
+    scheduleTask({
+      taskName: "test-task-30sec",
+      serviceType: "recommendation",
+      cronExpression: "*/15 * * * * *",
+      enabled: true,
+      data: {
+        isTest: true,
+        message: "This is a test notification",
+      },
+    });
   } catch (error) {
     console.error("Error initializing scheduler:", error);
   }
@@ -181,7 +205,7 @@ const scheduleTask = (task: any) => {
         console.log(`Running task: ${task.taskName}`);
 
         task.lastRun = new Date();
-        await task.save();
+        // await task.save();
 
         await sendKafkaMessage(task);
       } catch (error) {
@@ -207,7 +231,7 @@ const sendKafkaMessage = async (task: Task) => {
       topic = "user.events";
       break;
     case "notification":
-      topic = "notification.created";
+      topic = "notification.tasks";
       break;
     case "recommendation":
       topic = "recommendation.process";
